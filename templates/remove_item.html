@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html>
 
-
 <head>
-    <title>Ilmoituksen poisto</title>
+    <title>Arvion poisto</title>
 </head>
 
-
 <body>
-    <h1>Ilmoituksen poisto</h1>
-    <form action="/remove_item" method = "post">
+    <h1>Arvion poisto</h1>
+
+    <p>Arvio kirjasta: <b>{{ item.title }}</b></p>
+
+    <p>Haluatko varmasti poistaa tämän arvion?</p>
+
+    <form action="/remove_item/{{ item.id }}" method="post">
+        <input type="submit" name="remove" value="Poista arvio">
+        <input type="submit" name="cancel" value="Palaa takaisin">
     </form>
+
 </body>
 </html>
