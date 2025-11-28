@@ -15,6 +15,17 @@ def index():
     all_items = items.get_items()
     return render_template("index.html", items=all_items)
 
+@app.route("/find_item")
+def find_item():
+    query = request.args.get("query", "")
+    if query:
+        results = items.find_items(query)       
+    else:
+        query = ""
+        results = []
+    return render_template("find_item.html", query=query, results=results)
+
+
 
 @app.route("/item/<int:item_id>")
 def show_item(item_id):
@@ -73,6 +84,11 @@ def remove_item(item_id):
         else:
             return redirect("/item/" + str(item_id))
 
+
+#============
+#REKSITERÖITYMINEN
+#=============
+
 @app.route("/register")
 def register():
     return render_template("register.html")
@@ -94,10 +110,6 @@ def create():
         return "VIRHE: tunnus on jo varattu"
 
     return "Tunnus luotu"
-
-
-
-
 
 
 #-============
