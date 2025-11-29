@@ -6,17 +6,20 @@
 </head>
 
 <body>
-    <h1>Kirjavinkkisovellus</h1>
+  <h1>Kirjavinkkisovellus</h1>
 
-{% if session.get("username") %}
+  {% if session.get("username") %}
   <p>
-    Olet kirjautunut nimellä <b>{{ session.get("username") }}</b>,
-    id-numerosi on <b>{{ session.get("user_id") }}</b>
+    Olet kirjautunut nimellä <b>{{ session.username }}</b>, 
+    id-numerosi on <b>{{ session.user_id }}</b>
   </p>
 
+  {% if session.get("user_id") %}
   <p>
-    <a href="/logout">Kirjaudu ulos</a>
+    <b>Omat sivut:</b>
+    <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
   </p>
+  {% endif %}
 
   <p>
     <a href="/new_item">Uusi arvio</a>
@@ -27,26 +30,28 @@
     <a href="/login">Kirjaudu sisään</a>
     <a href="/register">Luo tunnus</a>
   </p>
-
   {% endif %}
 
-<p>
-<a href="/find_item">Etsi arvio</a>
-</p>
+  <p>
+    <a href="/find_item">Etsi arvio</a>
+  </p>
 
-<h2>Arviot</h2>
-<ul>
+  {% if session.get("username") %}
+  <p>
+    <a href="/logout">Kirjaudu ulos</a>
+  </p>
+  {% endif %}
+
+  <h2>Arviot</h2>
+  <ul>
     {% for item in items %}
     <li>
-        <a href="/item/{{ item[0] }}">
-            {{ item[1] }}
-        </a>
+      <a href="/item/{{ item.id }}">
+        {{ item.title }}
+      </a>
     </li>
     {% endfor %}
-</ul>
-
-
+  </ul>
 
 </body>
-
 </html>
