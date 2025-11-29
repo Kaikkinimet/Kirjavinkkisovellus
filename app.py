@@ -5,6 +5,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import config
 import db
 import items
+import re
 
 
 app = Flask(__name__)
@@ -50,9 +51,17 @@ def create_items():
         return redirect("/login")
 
     title = request.form["title"]
+    if not title or len(title) > 50:
+        abort(403)
     author = request.form["author"]
+    if not author or len(title) > 50:
+        abort(403)
     genre = request.form["genre"]
+    if not genre:
+        abort(403)
     description = request.form["description"]
+    if len(title) > 500:
+        abort(403)
     rate = request.form["rate"]
     user_id = session["user_id"]
 

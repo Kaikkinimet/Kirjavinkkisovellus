@@ -11,6 +11,6 @@ CREATE TABLE items (
     author TEXT,
     genre TEXT,
     description TEXT,
-    rate TEXT,
+    rate INTEGER,
     user_id INTEGER REFERENCES users(id)
 );
