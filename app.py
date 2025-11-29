@@ -63,6 +63,8 @@ def create_items():
     if len(title) > 500:
         abort(403)
     rate = request.form["rate"]
+    if not rate:
+        abort(403)    
     user_id = session["user_id"]
 
     items.add_item(title, author, genre, description, rate, user_id)
@@ -90,10 +92,23 @@ def update_item(item_id):
     if item["user_id"] != session["user_id"]:
         abort(403)
     title = request.form["title"]
+    if not title or len(title) > 50:
+        abort(403)
+    
     author = request.form["author"]
+    if not author or len(title) > 50:
+        abort(403)
     genre = request.form["genre"]
+    if not genre:
+        abort(403)
+
     description = request.form["description"]
+    if len(title) > 500:
+        abort(403)
+    
     rate = request.form["rate"]
+    if not rate:
+        abort(403)
     items.update_item(item_id, title, author, genre, description, rate)
     return redirect(f"/item/{item_id}")
 
