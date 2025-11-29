@@ -26,7 +26,6 @@ def find_item():
     return render_template("find_item.html", query=query, results=results)
 
 
-
 @app.route("/item/<int:item_id>")
 def show_item(item_id):
     item = items.get_item(item_id)
@@ -34,13 +33,19 @@ def show_item(item_id):
         abort(404)
     return render_template("show_item.html", item=item)
 
+def require_login():
+    if "user_id" not in session:
+        abort(403)
 
 @app.route("/new_item")
 def new_item():
+    require_login()
     return render_template("new_item.html")
 
 @app.route("/create_items", methods=["POST"])
 def create_items():
+    require_login()
+
     if "user_id" not in session:
         return redirect("/login")
 
@@ -57,6 +62,7 @@ def create_items():
 
 @app.route("/edit_item/<int:item_id>")
 def edit_item(item_id):
+    require_login()
     item = items.get_item(item_id)
     if not item:
         abort(404)
@@ -68,6 +74,7 @@ def edit_item(item_id):
 
 @app.route("/update_item/<int:item_id>", methods=["POST"])
 def update_item(item_id):
+    require_login()
     item = items.get_item(item_id)
     if not item:
         abort(404)
@@ -85,6 +92,7 @@ def update_item(item_id):
 
 @app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
 def remove_item(item_id):
+    require_login()
     item = items.get_item(item_id)
     if not item:
         abort(404)
@@ -163,6 +171,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    del session["user_id"]
-    del session["username"]
+    if "user_id" in session:
+        del session["user_id"]
+        del session["username"]
     return redirect("/")

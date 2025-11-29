@@ -13,18 +13,24 @@
     Olet kirjautunut nimellä <b>{{ session.get("username") }}</b>,
     id-numerosi on <b>{{ session.get("user_id") }}</b>
   </p>
-{% endif %}
-
 
   <p>
-    
+    <a href="/logout">Kirjaudu ulos</a>
+  </p>
+
+  <p>
+    <a href="/new_item">Uusi arvio</a>
+  </p>
+
+  {% else %}
+  <p>
     <a href="/login">Kirjaudu sisään</a>
     <a href="/register">Luo tunnus</a>
-    <a href="/logout">Kirjaudu ulos</a>
-</p>
+  </p>
+
+  {% endif %}
 
 <p>
-<a href="/new_item">Uusi arvio</a>
 <a href="/find_item">Etsi arvio</a>
 </p>
 
