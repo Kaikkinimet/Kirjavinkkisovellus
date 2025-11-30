@@ -45,7 +45,9 @@ def require_login():
 @app.route("/new_item")
 def new_item():
     require_login()
-    return render_template("new_item.html")
+    classes = items.get_all_classes()
+    return render_template("new_item.html", classes=classes)
+
 
 @app.route("/create_items", methods=["POST"])
 def create_items():
@@ -61,16 +63,23 @@ def create_items():
     if not author or len(title) > 50:
         abort(403)
     
-    classes = []
-    section = request.form["section"]
-    if section:
-        classes.append(("Osasto", section))
-    genre = request.form["genre"]
-    if genre:
-        classes.append(("Laji", genre))
-    print((classes))    
-    
 
+    classes = []
+    for entry in request.form.getlist("classes"):
+        if entry:
+            parts = entry.split(":")
+            classes.append((parts[0],parts[1]))
+    
+    #print(classes)
+    #classes = request.form.getlist("classes")
+
+    #section = request.form["section"]
+    #if section:
+    #    classes.append(("Osasto", section))
+    #genre = request.form["genre"]
+    #if genre:
+    #    classes.append(("Laji", genre))
+    
     description = request.form["description"]
     if len(title) > 500:
         abort(403)

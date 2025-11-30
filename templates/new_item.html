@@ -1,60 +1,50 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <title>Uusi kirja</title>
 </head>
 
 <body>
-    <h1>Uusi kirja</h1>
-  <form action="/create_items" method="post">
- 
+<h1>Uusi kirja</h1>
+
+<form action="/create_items" method="post">
+
+  <p>
+    Kirjan nimi: <br>
+    <input type="text" name="title" maxlength="50" required>
+  </p>
+
+  <p>
+    Kirjailijan nimi: <br>
+    <input type="text" name="author" maxlength="50" required>
+  </p>
+
+  {% for class in classes %}
     <p>
-      Kirjan nimi: <br />
-      <input type="text" name="title" maxlength="50" required/>
-    </p>
- 
-    <p>
-      Kirjailijan nimi: <br />
-      <input type="text" name="author" maxlength="50" required/>
-    </p>
-    
-    <p>
-      Osasto: <br />
-      <select name="section">
-        <option value="">(Valitse)</option>
-        <option value="Aikuiset">Aikuiset</option>
-        <option value="Nuoret">Nuoret</option>
-        <option value="Lapset">Lapset</option>
+      {{ class }}: <br>
+      <select name="classes">
+        <option value="">(valitse)</option>
+      {% for option in classes[class] %}
+      <option value="{{ class }}:{{ option }}">{{ option }}</option>
+      {% endfor %}
       </select>
-      </p>
-
-
-    <p>
-        Laji: <br />
-        <select name="genre">
-          <option value="">(Valitse)</option>
-          <option value="Romaani">Romaani</option>
-          <option value="Jännitys">Jännitys</option>
-          <option value="Kauhu">Kauhu</option>
-        </select>
     </p>
+  {% endfor %}
 
-    <p>
-        Kuvaus: <br />
-        <textarea name="description" rows="8" cols="40" maxlength="500"> </textarea> 
+  <p>
+    Kuvaus: <br>
+    <textarea name="description" rows="8" cols="40" maxlength="500"></textarea>
+  </p>
 
-      </p>
-    
-    <p>
-        Arvio (1-5): <br />
-        <input type="text" name="rate" size="5" required>
-    </p>
-    <p> 
-    </p>
-        <input type="submit" value="Luo arvostelu" />
+  <p>
+    Arvio (1–5): <br>
+    <input type="number" name="rate" min="1" max="5" required>
+  </p>
 
-    </form>
+  <p>
+    <input type="submit" value="Luo arvostelu">
+  </p>
+
+</form>
 </body>
-
 </html>
