@@ -1,10 +1,28 @@
 import db
 
-def add_item(title, author, genre, description, rate, user_id):
-    sql = """INSERT INTO items (title, author, genre, description, rate, user_id) 
-               VALUES (?, ?, ?, ?, ?, ?)"""
-    db.execute(sql, [title, author, genre, description, rate, user_id])
+def add_item(title, author, description, rate, user_id, classes):
+    sql = """INSERT INTO items (title, author, description, rate, user_id) 
+               VALUES (?, ?, ?, ?, ?)"""
+    item_id = db.execute(sql, [title, author, description, rate, user_id])
 
+    sql = "INSERT INTO item_classes (item_id, title, value) VALUES (?, ?, ?)"
+    for title, value in classes:
+        db.execute(sql, [item_id, title, value])
+    return item_id
+
+
+
+def add_class(item_id, title, value):
+    sql = """INSERT INTO item_classes (item_id, title, value)
+             VALUES (?, ?, ?)"""
+    db.execute(sql, [item_id, title, value])
+
+def get_classes(item_id):
+    sql = """SELECT title, value 
+            FROM item_classes 
+            WHERE item_id = ?"""
+    return db.query(sql, [item_id])
+    
 
 def get_items():
     sql = "SELECT id, title FROM items ORDER BY id DESC"
@@ -17,7 +35,6 @@ def get_item(item_id):
             items.id,
             items.title,
             items.author,
-            items.genre,
             items.description,
             items.rate,
             items.user_id,
@@ -30,13 +47,13 @@ def get_item(item_id):
     return result[0] if result else None
 
 
-def update_item(item_id, title, author, genre, description, rate):
+def update_item(item_id, title, author, description, rate):
     sql = """
         UPDATE items
-        SET title = ?, author = ?, genre = ?, description = ?, rate = ?
+        SET title = ?, author = ?, description = ?, rate = ?
         WHERE id = ?
     """
-    db.execute(sql, [title, author, genre, description, rate, item_id])
+    db.execute(sql, [title, author, description, rate, item_id])
 
 def remove_item(item_id):
     sql = "DELETE FROM items WHERE id = ?"

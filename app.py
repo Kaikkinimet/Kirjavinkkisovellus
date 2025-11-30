@@ -32,7 +32,11 @@ def show_item(item_id):
     item = items.get_item(item_id)
     if not item:
         abort(404)
-    return render_template("show_item.html", item=item)
+    classes = items.get_classes(item_id)
+    return render_template("show_item.html", item=item, classes=classes)
+
+
+
 
 def require_login():
     if "user_id" not in session:
@@ -56,20 +60,33 @@ def create_items():
     author = request.form["author"]
     if not author or len(title) > 50:
         abort(403)
+    
+    classes = []
+    section = request.form["section"]
+    if section:
+        classes.append(("Osasto", section))
     genre = request.form["genre"]
-    if not genre:
-        abort(403)
+    if genre:
+        classes.append(("Laji", genre))
+    print((classes))    
+    
+
     description = request.form["description"]
     if len(title) > 500:
         abort(403)
+    
     rate = request.form["rate"]
     if not rate:
         abort(403)    
-    user_id = session["user_id"]
+    
 
-    items.add_item(title, author, genre, description, rate, user_id)
+    user_id = session["user_id"]
+    items.add_item(title, author, description, rate, user_id, classes)
     return redirect("/")
 
+#=====================
+##ARVION MUOKKAAMINEN
+#=====================
 
 @app.route("/edit_item/<int:item_id>")
 def edit_item(item_id):
@@ -150,15 +167,30 @@ def create():
     username = request.form["username"]
     password1 = request.form["password1"]
     password2 = request.form["password2"]
+
+    if not username or not password1 or not password2:
+        return "VIRHE: kaikki kentät täytettävä"
+
     if password1 != password2:
         return "VIRHE: salasanat eivät ole samat"
-    
+
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
         return "VIRHE: tunnus on jo luotu"
 
-    return "tunnus luotu"
+    return redirect("/login")
+
+
+   # if password1 != password2:
+   #     return "VIRHE: salasanat eivät ole samat"
+   # 
+    #try:
+    #    users.create_user(username, password1)
+    #except sqlite3.IntegrityError:
+    #    return "VIRHE: tunnus on jo luotu"
+
+    #return "tunnus luotu"
 
 
 #-============
@@ -169,15 +201,49 @@ def login():
     if request.method == "GET":
         return render_template("login.html")
 
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+    username = request.form["username"]
+    password = request.form["password"]
+    
+    user_id = users.check_login(username, password)
 
-        user_id = users.check_login(username, password)
-        if user_id: 
-            session["user_id"] = user_id
-            session["username"] = username
-            return redirect("/")
+
+   
+#        if check_password_hash(password_hash, password):
+#            session["user_id"] = user_id
+#            session["username"] = username
+#            return redirect("/")
+#        else:
+#            return "VIRHE: väärä tunnus tai salasana" 
+    if not user_id:
+        session.pop("user_id", None)
+        session.pop("username", None)
+        return render_template(
+            "login.html",
+            error="VIRHE: väärä tunnus tai salasana"
+        )    
+    session["user_id"] = user_id
+    session["username"] = username
+    return redirect("/")
+#        else:
+#            return "VIRHE: väärä tunnus tai salasana"
+
+
+
+    #        session["user_id"] = user_id
+    #        session["username"] = username
+    #        return redirect("/")
+
+    #if request.method == "POST":
+    #    username = request.form["username"]
+    #    password = request.form["password"]
+
+    #    user_id = users.check_login(username, password)
+    #    if user_id: 
+    #        session["user_id"] = user_id
+    #        session["username"] = username
+    #        return redirect("/")
+
+
 
 
  #       sql = "SELECT id, password_hash FROM users WHERE username = ?"

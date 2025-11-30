@@ -13,6 +13,13 @@
   <p>
     <a href="/logout">Kirjaudu ulos</a>
   </p>
+  
+
+  {% if error %}
+  <p style="color:red;">{{ error }}</p>
+  {% endif %}
+
+
   {% else %}
   <form action="/login" method="post">
     <p>
