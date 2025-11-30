@@ -105,8 +105,18 @@ def edit_item(item_id):
         abort(404)
     if item["user_id"] != session["user_id"]:
         abort(403)
+    all_classes = items.get_all_classes()
+    classes = {}
+    for my_class in classes:
+        classes[my_class] = ""
+    
+    for entry in items.get_classes(item_id):
+        classes[entry["title"]] = entry["value"]
+  
+    return render_template("edit_item.html", item=item, classes=classes, all_classes=all_classes)
 
-    return render_template("edit_item.html", item=item)
+
+
 
 
 @app.route("/update_item/<int:item_id>", methods=["POST"])
@@ -124,9 +134,12 @@ def update_item(item_id):
     author = request.form["author"]
     if not author or len(title) > 50:
         abort(403)
-    genre = request.form["genre"]
-    if not genre:
-        abort(403)
+
+    classes = []
+    for entry in request.form.getlist("classes"):
+        if entry:
+            parts = entry.split(":")
+            classes.append((parts[0],parts[1]))
 
     description = request.form["description"]
     if len(title) > 500:
@@ -135,7 +148,7 @@ def update_item(item_id):
     rate = request.form["rate"]
     if not rate:
         abort(403)
-    items.update_item(item_id, title, author, genre, description, rate)
+    items.update_item(item_id, title, author, description, rate, classes)
     return redirect(f"/item/{item_id}")
 
 
