@@ -25,6 +25,7 @@ def index():
 #KIRJA-ARVIOT
 #===========
 
+#----------------------------------
 #ARVIO LUOMINEN
 @app.route("/new_item")
 def new_item():
@@ -68,6 +69,7 @@ def create_items():
     items.add_item(title, author, description, rate, user_id, classes)
     return redirect("/")
 
+#----------------------------------
 #ARVIO MUOKKAAMINEN
 
 @app.route("/edit_item/<int:item_id>")
@@ -88,6 +90,7 @@ def edit_item(item_id):
   
     return render_template("edit_item.html", item=item, classes=classes, all_classes=all_classes)
 
+#----------------------------------
 #ARVIO PÄIVITYS
 
 @app.route("/update_item/<int:item_id>", methods=["POST"])
@@ -123,7 +126,7 @@ def update_item(item_id):
     items.update_item(item_id, title, author, description, rate, classes)
     return redirect(f"/item/{item_id}")
 
-
+#----------------------------------
 #ARVION POISTAMINEN
 
 @app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
@@ -144,6 +147,7 @@ def remove_item(item_id):
         else:
             return redirect("/item/" + str(item_id))
 
+#----------------------------------
 #ARVIO NÄYTTÄMINEN JA ETSIMINEN
 
 @app.route("/item/<int:item_id>")
@@ -152,7 +156,8 @@ def show_item(item_id):
     if not item:
         abort(404)
     classes = items.get_classes(item_id)
-    return render_template("show_item.html", item=item, classes=classes)
+    comments = items.get_comments(item_id)
+    return render_template("show_item.html", item=item, classes=classes, comments=comments)
 
 def require_login():
     if "user_id" not in session:
@@ -168,6 +173,29 @@ def find_item():
         query = ""
         results = []
     return render_template("find_item.html", query=query, results=results)
+
+
+#----------------------------------
+#ARVIO KOMMENTOINTI
+
+@app.route("/create_comment", methods=["POST"])
+def create_comment():
+    require_login()
+    if "user_id" not in session:
+        return redirect("/login")
+ 
+    comment = request.form["comment"]
+    if len(comment) > 500:
+        abort(403)
+    item_id = request.form["item_id"]
+    item = items.get_item(item_id)
+    if not item:
+        abort(403)
+    user_id = session["user_id"]
+    items.create_comment(item_id, user_id, comment)
+    return redirect("/item/" + str(item_id)) 
+
+
 
 #============
 #KÄYTTÄJÄ
