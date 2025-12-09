@@ -12,20 +12,15 @@ def get_all_classes():
     return classes
 
 
-def add_item(title, author, description, rate, user_id, classes):
-
-    
+def add_item(title, author, description, rate, user_id, classes):   
     sql = """INSERT INTO items (title, author, description, rate, user_id) 
                VALUES (?, ?, ?, ?, ?)"""
     item_id = db.execute(sql, [title, author, description, rate, user_id])
 
-   
-   
     sql = "INSERT INTO item_classes (item_id, title, value) VALUES (?, ?, ?)"
     for title, value in classes:
         db.execute(sql, [item_id, title, value])
     return item_id
-
 
 
 def add_class(item_id, title, value):
@@ -96,3 +91,14 @@ def find_items(query):
     like = "%" + query + "%"
     return db.query(sql, [like, like, like, like])
 
+def create_comment(item_id, user_id, comment):
+    sql = "INSERT INTO comments (item_id, user_id, comment) VALUES (?, ?, ?)"
+    db.execute(sql, [item_id, user_id, comment])
+
+def get_comments(item_id):
+    sql = """SELECT comment, users.id user_id, users.username
+            FROM comments, users
+            WHERE comments.item_id = ? AND comments.user_id = users.id
+            ORDER BY comments.id DESC
+        """
+    return db.query(sql, [item_id])
