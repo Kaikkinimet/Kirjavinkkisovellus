@@ -16,32 +16,16 @@ def index():
     all_items = items.get_items()
     return render_template("index.html", items=all_items)
 
-@app.route("/find_item")
-def find_item():
-    query = request.args.get("query", "")
-    if query:
-        results = items.find_items(query)       
-    else:
-        query = ""
-        results = []
-    return render_template("find_item.html", query=query, results=results)
-
-
-@app.route("/item/<int:item_id>")
-def show_item(item_id):
-    item = items.get_item(item_id)
-    if not item:
-        abort(404)
-    classes = items.get_classes(item_id)
-    return render_template("show_item.html", item=item, classes=classes)
 
 
 
 
-def require_login():
-    if "user_id" not in session:
-        abort(403)
 
+#============
+#KIRJA-ARVIOT
+#===========
+
+#ARVIO LUOMINEN
 @app.route("/new_item")
 def new_item():
     require_login()
@@ -63,39 +47,28 @@ def create_items():
     if not author or len(title) > 50:
         abort(403)
     
-
+    all_classes = items.get_all_classes()
     classes = []
     for entry in request.form.getlist("classes"):
         if entry:
-            parts = entry.split(":")
-            classes.append((parts[0],parts[1]))
-    
-    #print(classes)
-    #classes = request.form.getlist("classes")
-
-    #section = request.form["section"]
-    #if section:
-    #    classes.append(("Osasto", section))
-    #genre = request.form["genre"]
-    #if genre:
-    #    classes.append(("Laji", genre))
-    
+            class_title, class_value = entry.split(":")
+            if class_title not in all_classes:
+                abort(403)
+            if class_value not in all_classes[class_title]:
+                abort(403)
+            classes.append((class_title, class_value))
+  
     description = request.form["description"]
     if len(title) > 500:
         abort(403)
-    
     rate = request.form["rate"]
     if not rate:
         abort(403)    
-    
-
     user_id = session["user_id"]
     items.add_item(title, author, description, rate, user_id, classes)
     return redirect("/")
 
-#=====================
-##ARVION MUOKKAAMINEN
-#=====================
+#ARVIO MUOKKAAMINEN
 
 @app.route("/edit_item/<int:item_id>")
 def edit_item(item_id):
@@ -115,9 +88,7 @@ def edit_item(item_id):
   
     return render_template("edit_item.html", item=item, classes=classes, all_classes=all_classes)
 
-
-
-
+#ARVIO PÄIVITYS
 
 @app.route("/update_item/<int:item_id>", methods=["POST"])
 def update_item(item_id):
@@ -130,21 +101,22 @@ def update_item(item_id):
     title = request.form["title"]
     if not title or len(title) > 50:
         abort(403)
-    
     author = request.form["author"]
     if not author or len(title) > 50:
         abort(403)
-
+    all_classes = items.get_all_classes()
     classes = []
     for entry in request.form.getlist("classes"):
         if entry:
-            parts = entry.split(":")
-            classes.append((parts[0],parts[1]))
-
+            class_title, class_value = entry.split(":")
+            if class_title not in all_classes:
+                abort(403)
+            if class_value not in all_classes[class_title]:
+                abort(403)
+            classes.append((class_title, class_value))
     description = request.form["description"]
     if len(title) > 500:
-        abort(403)
-    
+        abort(403)    
     rate = request.form["rate"]
     if not rate:
         abort(403)
@@ -152,6 +124,7 @@ def update_item(item_id):
     return redirect(f"/item/{item_id}")
 
 
+#ARVION POISTAMINEN
 
 @app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
 def remove_item(item_id):
@@ -161,12 +134,9 @@ def remove_item(item_id):
         abort(404)
     if item["user_id"] != session["user_id"]:
         abort(403)
-
     if request.method == "GET":
         item = items.get_item(item_id)
-        return render_template("remove_item.html", item=item)
-    
-    
+        return render_template("remove_item.html", item=item)    
     if request.method == "POST":
         if "remove" in request.form:
             items.remove_item(item_id)
@@ -174,10 +144,36 @@ def remove_item(item_id):
         else:
             return redirect("/item/" + str(item_id))
 
+#ARVIO NÄYTTÄMINEN JA ETSIMINEN
+
+@app.route("/item/<int:item_id>")
+def show_item(item_id):
+    item = items.get_item(item_id)
+    if not item:
+        abort(404)
+    classes = items.get_classes(item_id)
+    return render_template("show_item.html", item=item, classes=classes)
+
+def require_login():
+    if "user_id" not in session:
+        abort(403)
+
+
+@app.route("/find_item")
+def find_item():
+    query = request.args.get("query", "")
+    if query:
+        results = items.find_items(query)       
+    else:
+        query = ""
+        results = []
+    return render_template("find_item.html", query=query, results=results)
 
 #============
-#REKSITERÖITYMINEN
+#KÄYTTÄJÄ
 #=============
+
+#REKSITERÖITYMINEN
 
 @app.route("/register")
 def register():
@@ -189,13 +185,10 @@ def create():
     username = request.form["username"]
     password1 = request.form["password1"]
     password2 = request.form["password2"]
-
     if not username or not password1 or not password2:
         return "VIRHE: kaikki kentät täytettävä"
-
     if password1 != password2:
         return "VIRHE: salasanat eivät ole samat"
-
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
@@ -204,38 +197,15 @@ def create():
     return redirect("/login")
 
 
-   # if password1 != password2:
-   #     return "VIRHE: salasanat eivät ole samat"
-   # 
-    #try:
-    #    users.create_user(username, password1)
-    #except sqlite3.IntegrityError:
-    #    return "VIRHE: tunnus on jo luotu"
-
-    #return "tunnus luotu"
-
-
-#-============
 #KIRJAUTUMINEN
-#=============
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
         return render_template("login.html")
-
     username = request.form["username"]
-    password = request.form["password"]
-    
+    password = request.form["password"]  
     user_id = users.check_login(username, password)
-
-
-   
-#        if check_password_hash(password_hash, password):
-#            session["user_id"] = user_id
-#            session["username"] = username
-#            return redirect("/")
-#        else:
-#            return "VIRHE: väärä tunnus tai salasana" 
     if not user_id:
         session.pop("user_id", None)
         session.pop("username", None)
@@ -246,43 +216,7 @@ def login():
     session["user_id"] = user_id
     session["username"] = username
     return redirect("/")
-#        else:
-#            return "VIRHE: väärä tunnus tai salasana"
 
-
-
-    #        session["user_id"] = user_id
-    #        session["username"] = username
-    #        return redirect("/")
-
-    #if request.method == "POST":
-    #    username = request.form["username"]
-    #    password = request.form["password"]
-
-    #    user_id = users.check_login(username, password)
-    #    if user_id: 
-    #        session["user_id"] = user_id
-    #        session["username"] = username
-    #        return redirect("/")
-
-
-
-
- #       sql = "SELECT id, password_hash FROM users WHERE username = ?"
- #       result = db.query(sql, [username])
-#
-#        if not result:
-#            return "VIRHE: väärä tunnus tai salasana"
-
-#        user_id = result[0][0]         
-#        password_hash = result[0][1]  
-
-#        if check_password_hash(password_hash, password):
-#            session["user_id"] = user_id
-#            session["username"] = username
-#            return redirect("/")
-#        else:
-#            return "VIRHE: väärä tunnus tai salasana"
 
 @app.route("/logout")
 def logout():
@@ -290,7 +224,6 @@ def logout():
         del session["user_id"]
         del session["username"]
     return redirect("/")
-
 
 #KÄYTTÄJÄSIVUT
 

@@ -13,10 +13,14 @@ def get_all_classes():
 
 
 def add_item(title, author, description, rate, user_id, classes):
+
+    
     sql = """INSERT INTO items (title, author, description, rate, user_id) 
                VALUES (?, ?, ?, ?, ?)"""
     item_id = db.execute(sql, [title, author, description, rate, user_id])
 
+   
+   
     sql = "INSERT INTO item_classes (item_id, title, value) VALUES (?, ?, ?)"
     for title, value in classes:
         db.execute(sql, [item_id, title, value])
