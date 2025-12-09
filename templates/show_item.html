@@ -1,84 +1,63 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>{{ item.title }}</title>
+{% extends "layout.html" %}
 
-    <style>
-    .comment {
-        white-space: pre-wrap;   
-        word-wrap: break-word;  
-        max-width: 600px;
-    }
-    </style>
+{% block title %}{{ item.title }}{% endblock %}
 
+{% block content %}
 
+<title>{{ item.title }}</title>
 
-</head>
-
-<body>
-    <h1>{{ item.title }}</h1>
-    
-    {% if session.get("user_id") == item.user_id %}
-
-    <p>
-        <a href ="/edit_item/{{ item.id }}" >Muokkaa</a>
-        <a href ="/remove_item/{{ item.id }}" >Poista</a>
-    </p>
-    {% endif %}
-
-    <p><b>Kirjailija:</b> {{ item.author }}</p>
-    
-    <p>
-        <b>Luokittelu:</b>
-        <ul>
-            {% for c in classes %}
-            <li>{{ c.title }}: {{ c.value }}</li>
-            {% endfor %}
-
-        </ul> 
-
-    </p>
-
-    <p><b>Kuvaus:</b> {{ item.description }}</p>
-   
-    <p><b>Arvosana:</b> ⭐️ {{ item.rate }}/5 </p>
-
-    <p><b>Lisääjä:</b> <a href="/user/{{ item.user_id }}">{{item.username }}</a></p>
+<style>
+.comment {
+    white-space: pre-wrap;   
+    word-wrap: break-word;  
+    max-width: 600px;
+}
+</style>
 
 
+<h2>{{ item.title }}</h2>
 
-    <h2>Uusi kommentti ja arvio</h2>
-    <form action ="/create_comment" method="post">
+{% if session.get("user_id") == item.user_id %}
+<p>
+    <a href ="/edit_item/{{ item.id }}" >Muokkaa</a>
+    <a href ="/remove_item/{{ item.id }}" >Poista</a>
+</p>
+{% endif %}
+
+<p><b>Kirjailija:</b> {{ item.author }}</p>
+<p>
+    <b>Luokittelu:</b>
+    <ul>
+        {% for c in classes %}
+        <li>{{ c.title }}: {{ c.value }}</li>
+        {% endfor %}
+    </ul>
+</p>
+<p><b>Lisääjä:</b> <a href="/user/{{ item.user_id }}">{{item.username }}</a></p>
+<p><b>Arvosana:</b> ⭐️ {{ item.rate }}/5 </p>
+<p><b>Kuvaus:</b> {{ item.description }}</p>
+
+<h3>Uusi kommentti ja arvio</h3>
+<form action ="/create_comment" method="post">
     <p>
         Arvio (1–5): <br>
         <input type="number" name="rate" min="1" max="5" required>
-    </p>
-        
-        Kommentti: <br />
-        <textarea name="comment" rows="8" cols="40" maxlength="500"></textarea>
-        <input type="hidden" name="item_id" value="{{ item.id }}" />
-        <input type="submit" value="Lisää kommentti" />
+    </p>    
+    Kommentti: <br />
+    <textarea name="comment" rows="8" cols="40" maxlength="500"></textarea>
+    <input type="hidden" name="item_id" value="{{ item.id }}" />
+    <input type="submit" value="Lisää kommentti" />
+</form>
 
-    </form>
-
-    <p>
-        <a href="/">Takaisin etusivulle</a>
-    </p>
-
-
-        <h2>Kommentit ja arviot</h2>
-    <ul>
-        {% for co in comments %}
-        <li>
-            <a href="/user/{{ co.user_id }}">{{ co.username }}</a>
-            - ⭐️ {{ co.rate}} /5
-            <small>({{co.created_at}})</small>
-            
-            <div class="comment"> {{ co.comment }}</div>
-        </li>
-        {% endfor %}
-    
-    </ul>
-
-</body>
-</html>
+<h3>Kommentit ja arviot</h3>
+<ul>
+    {% for co in comments %}
+    <li>
+        <a href="/user/{{ co.user_id }}">{{ co.username }}</a>
+        - ⭐️ {{ co.rate}} /5
+        <small>({{co.created_at}})</small>
+        <div class="comment"> {{ co.comment }}</div>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
