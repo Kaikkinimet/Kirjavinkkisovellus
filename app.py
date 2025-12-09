@@ -187,13 +187,22 @@ def create_comment():
     comment = request.form["comment"]
     if len(comment) > 500:
         abort(403)
+    
+    rate = int(request.form["rate"])
+    if rate < 1 or rate > 5:
+        abort(403)
     item_id = request.form["item_id"]
     item = items.get_item(item_id)
     if not item:
         abort(403)
     user_id = session["user_id"]
-    items.create_comment(item_id, user_id, comment)
+
+    try:
+        items.create_comment(item_id, user_id, rate, comment)
+    except sqlite3.IntegrityError:
+        return "Olet jo kommentoinut tämän kirjan"
     return redirect("/item/" + str(item_id)) 
+ 
 
 
 

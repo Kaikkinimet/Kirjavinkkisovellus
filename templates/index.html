@@ -5,43 +5,28 @@
   <title>Kirjavinkkisovellus</title>
 </head>
 
+
 <body>
   <h1>Kirjavinkkisovellus</h1>
 
   {% if session.get("username") %}
   <p>
-    Olet kirjautunut nimellä <b>{{ session.username }}</b>, 
-    id-numerosi on <b>{{ session.user_id }}</b>
-  </p>
-
-  {% if session.get("user_id") %}
-  <p>
-    <b>Omat sivut:</b>
-    <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
+    Olet kirjautunut nimellä <b>{{ session.username }}</b>
   </p>
   {% endif %}
 
   <p>
+    <a href="/find_item">Etsi arvio</a> 
+  {% if session.get("user_id") %}
     <a href="/new_item">Uusi arvio</a>
-  </p>
+    <a href="/logout">Kirjaudu ulos</a>
 
   {% else %}
-  <p>
     <a href="/login">Kirjaudu sisään</a>
     <a href="/register">Luo tunnus</a>
-  </p>
   {% endif %}
-
-  <p>
-    <a href="/find_item">Etsi arvio</a>
   </p>
-
-  {% if session.get("username") %}
-  <p>
-    <a href="/logout">Kirjaudu ulos</a>
-  </p>
-  {% endif %}
-
+  
   <h2>Arviot</h2>
   <ul>
     {% for item in items %}

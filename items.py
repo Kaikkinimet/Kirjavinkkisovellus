@@ -91,14 +91,14 @@ def find_items(query):
     like = "%" + query + "%"
     return db.query(sql, [like, like, like, like])
 
-def create_comment(item_id, user_id, comment):
-    sql = "INSERT INTO comments (item_id, user_id, comment) VALUES (?, ?, ?)"
-    db.execute(sql, [item_id, user_id, comment])
+def create_comment(item_id, user_id, rate, comment):
+    sql = "INSERT INTO comments (item_id, user_id, rate, comment) VALUES (?, ?, ?, ?)"
+    db.execute(sql, [item_id, user_id, rate, comment])
 
 def get_comments(item_id):
-    sql = """SELECT comment, users.id user_id, users.username
+    sql = """SELECT comment, rate, created_at, users.id user_id, users.username
             FROM comments, users
             WHERE comments.item_id = ? AND comments.user_id = users.id
-            ORDER BY comments.id DESC
+            ORDER BY created_at DESC
         """
     return db.query(sql, [item_id])

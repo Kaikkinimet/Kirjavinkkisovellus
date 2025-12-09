@@ -33,5 +33,8 @@ CREATE TABLE comments (
     id INTEGER PRIMARY KEY,
     item_id INTEGER REFERENCES items,
     user_id INTEGER REFERENCES users,
-    comment TEXT
+    rate INTEGER, 
+    comment TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (item_id, user_id)
 );
