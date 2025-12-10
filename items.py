@@ -41,10 +41,11 @@ def get_items():
                 items.title, 
                 items.author, 
                 items.rate, 
-                users.id, 
+                items.user_id, 
                 users.username,
                 COUNT(comments.id) comment_count
-            FROM items JOIN users ON items.user_id = users.id 
+            FROM items 
+            JOIN users ON items.user_id = users.id 
             LEFT JOIN comments ON items.id = comments.item_id
                GROUP BY items.id
             ORDER BY items.id DESC"""
@@ -89,18 +90,38 @@ def remove_item(item_id):
     sql = "DELETE FROM items WHERE id = ?"
     db.execute(sql, [item_id])
 
+#def find_items(query):
+#    sql = """
+#        SELECT id, title
+#        FROM items
+#        WHERE title LIKE ?
+#        OR author LIKE ?
+#        OR genre LIKE ?
+#        OR description LIKE ?
+#        ORDER BY id DESC
+#    """
+#    like = "%" + query + "%"
+#    return db.query(sql, [like, like, like, like])
+
 def find_items(query):
-    sql = """
-        SELECT id, title
-        FROM items
-        WHERE title LIKE ?
-        OR author LIKE ?
-        OR genre LIKE ?
-        OR description LIKE ?
-        ORDER BY id DESC
-    """
     like = "%" + query + "%"
-    return db.query(sql, [like, like, like, like])
+    sql = """
+        SELECT DISTINCT items.id, items.title
+        FROM items
+        LEFT JOIN item_classes ic ON ic.item_id = items.id
+        WHERE items.title LIKE ?
+           OR items.author LIKE ?
+           OR items.description LIKE ?
+           OR ic.title LIKE ?
+           OR ic.value LIKE ?
+        ORDER BY items.id DESC
+    """
+    return db.query(sql, [like, like, like, like, like])
+
+
+
+
+
 
 def create_comment(item_id, user_id, rate, comment):
     sql = "INSERT INTO comments (item_id, user_id, rate, comment) VALUES (?, ?, ?, ?)"
