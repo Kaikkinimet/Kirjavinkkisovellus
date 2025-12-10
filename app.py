@@ -7,7 +7,6 @@ import items
 import re
 import users
 
-
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
@@ -15,16 +14,9 @@ app.secret_key = config.secret_key
 def index():
     all_items = items.get_items()
     return render_template("index.html", items=all_items)
-
-
-
-
-
-
 #============
 #KIRJA-ARVIOT
 #===========
-
 #----------------------------------
 #ARVIO LUOMINEN
 @app.route("/new_item")
@@ -32,7 +24,6 @@ def new_item():
     require_login()
     classes = items.get_all_classes()
     return render_template("new_item.html", classes=classes)
-
 
 @app.route("/create_items", methods=["POST"])
 def create_items():
@@ -46,8 +37,7 @@ def create_items():
         abort(403)
     author = request.form["author"]
     if not author or len(title) > 50:
-        abort(403)
-    
+        abort(403)    
     all_classes = items.get_all_classes()
     classes = []
     for entry in request.form.getlist("classes"):
@@ -58,7 +48,6 @@ def create_items():
             if class_value not in all_classes[class_title]:
                 abort(403)
             classes.append((class_title, class_value))
-  
     description = request.form["description"]
     if len(title) > 500:
         abort(403)
@@ -66,8 +55,8 @@ def create_items():
     if not rate:
         abort(403)    
     user_id = session["user_id"]
-    items.add_item(title, author, description, rate, user_id, classes)
-    return redirect("/")
+    item_id = items.add_item(title, author, description, rate, user_id, classes)
+    return redirect(f"/item/{item_id}")
 
 #----------------------------------
 #ARVIO MUOKKAAMINEN
@@ -83,11 +72,9 @@ def edit_item(item_id):
     all_classes = items.get_all_classes()
     classes = {}
     for my_class in classes:
-        classes[my_class] = ""
-    
+        classes[my_class] = ""   
     for entry in items.get_classes(item_id):
         classes[entry["title"]] = entry["value"]
-  
     return render_template("edit_item.html", item=item, classes=classes, all_classes=all_classes)
 
 #----------------------------------
@@ -163,7 +150,6 @@ def require_login():
     if "user_id" not in session:
         abort(403)
 
-
 @app.route("/find_item")
 def find_item():
     query = request.args.get("query", "")
@@ -174,7 +160,6 @@ def find_item():
         results = []
     return render_template("find_item.html", query=query, results=results)
 
-
 #----------------------------------
 #ARVIO KOMMENTOINTI
 
@@ -182,12 +167,10 @@ def find_item():
 def create_comment():
     require_login()
     if "user_id" not in session:
-        return redirect("/login")
- 
+        return redirect("/login") 
     comment = request.form["comment"]
     if len(comment) > 500:
         abort(403)
-    
     rate = int(request.form["rate"])
     if rate < 1 or rate > 5:
         abort(403)
@@ -196,26 +179,19 @@ def create_comment():
     if not item:
         abort(403)
     user_id = session["user_id"]
-
     try:
         items.create_comment(item_id, user_id, rate, comment)
     except sqlite3.IntegrityError:
         return "Olet jo kommentoinut tämän kirjan"
     return redirect("/item/" + str(item_id)) 
  
-
-
-
 #============
 #KÄYTTÄJÄ
 #=============
-
 #REKSITERÖITYMINEN
-
 @app.route("/register")
 def register():
     return render_template("register.html")
-
 
 @app.route("/create", methods=["POST"])
 def create():
@@ -230,12 +206,9 @@ def create():
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
         return "VIRHE: tunnus on jo luotu"
-
     return redirect("/login")
 
-
 #KIRJAUTUMINEN
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
@@ -254,7 +227,6 @@ def login():
     session["username"] = username
     return redirect("/")
 
-
 @app.route("/logout")
 def logout():
     if "user_id" in session:
@@ -263,7 +235,6 @@ def logout():
     return redirect("/")
 
 #KÄYTTÄJÄSIVUT
-
 @app.route("/user/<int:user_id>")
 def show_user(user_id):
     user = users.get_user(user_id)
