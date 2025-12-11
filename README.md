@@ -40,7 +40,7 @@ Millainen sovellus on ja miten sitä voi testata
 **Käynnistä sovellus**
 - $ flask run
 
-**Me osoitteeseen http://127.0.0.1:5000 ja kokeile sovellusta:**
+**Kokeile sovellusta:**
 - Luo käyttäjä
 - Kirjaudu sisään/ulos
 - Lisää kirjavinkkejä
