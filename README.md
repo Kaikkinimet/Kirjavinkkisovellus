@@ -1,6 +1,5 @@
-**Kirjanvinkkisovellus**
-
-Millainen sovellus on ja miten sitä voi testata
+*Kirjanvinkkisovellus*
+Seuraavassa kerrotaan millainen sovellus on ja miten sitä voi testata
 
 **Sovelluksen toiminnot**
 
@@ -18,29 +17,29 @@ Millainen sovellus on ja miten sitä voi testata
 ***Kirjavinkit:***
 - Kirjan lisääminen, muokkaaminen ja poistaminen
 - Kirjan kentät: Kirja, Kirjailija, Luokittelu (Osasto, laji), Kuvaus, Arvosana. luokat ovat tietokannassa.
-- Sovelluksessa on pääasiallisen tietokohteen (kirja) lisäksi toissijainen tietokohde (arvostelu), joka täydentää pääasiallista tietokohdetta.
+- Sovelluksessa on pääasiallisen tietokohteen (kirja) lisäksi toissijainen tietokohde (kommentoint), joka täydentää pääasiallista tietokohdetta.
 
 
 **Miten testata?**
-*** Sovelluksen asennus***
+***Sovelluksen asennus***
 - Kloonaa sovellus koneellesi:
     - Avaa terminaali ja kirjoita: git clone https://github.com/Kaikkinimet/Kirjavinkkisovellus.git
     - $ cd Kirjavinkkisovellus
 
-**Luo virtuaaliympäristö ja asenna flask -kirjasto:**
+***Luo virtuaaliympäristö ja asenna flask -kirjasto:***
 - $ python3 -m venv venv
 - $ source venv/bin/activate
 - $ pip install flask
 - $ pip install werkzeug
 
-**Luo tietokanta**
+***Luo tietokanta***
 - $ sqlite3 database.db < schema.sql
 - $ sqlite3 database.db < init.sql
 
-**Käynnistä sovellus**
+***Käynnistä sovellus***
 - $ flask run
 
-**Kokeile sovellusta:**
+***Kokeile sovellusta:***
 - Luo käyttäjä
 - Kirjaudu sisään/ulos
 - Lisää kirjavinkkejä
