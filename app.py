@@ -1,3 +1,4 @@
+import secrets
 import sqlite3
 from flask import Flask
 from flask import abort, flash, redirect, render_template, request, session
@@ -9,6 +10,16 @@ import users
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
+
+def require_login():
+    if "user_id" not in session:
+        abort(403)
+
+def check_csrf():
+    if "csrf_token" not in request.form:
+        abort(403)
+    if request.form["csrf_token"] != session["csrf_token"]:
+        abort(403)
 
 @app.route("/")
 def index():
@@ -28,6 +39,7 @@ def new_item():
 @app.route("/create_items", methods=["POST"])
 def create_items():
     require_login()
+    check_csrf()
 
     if "user_id" not in session:
         return redirect("/login")
@@ -83,6 +95,7 @@ def edit_item(item_id):
 @app.route("/update_item/<int:item_id>", methods=["POST"])
 def update_item(item_id):
     require_login()
+    check_csrf()
     item = items.get_item(item_id)
     if not item:
         abort(404)
@@ -128,6 +141,7 @@ def remove_item(item_id):
         item = items.get_item(item_id)
         return render_template("remove_item.html", item=item)    
     if request.method == "POST":
+        check_csrf()
         if "remove" in request.form:
             items.remove_item(item_id)
             return redirect("/")
@@ -146,9 +160,6 @@ def show_item(item_id):
     comments = items.get_comments(item_id)
     return render_template("show_item.html", item=item, classes=classes, comments=comments)
 
-def require_login():
-    if "user_id" not in session:
-        abort(403)
 
 @app.route("/find_item")
 def find_item():
@@ -166,6 +177,7 @@ def find_item():
 @app.route("/create_comment", methods=["POST"])
 def create_comment():
     require_login()
+    check_csrf()
     if "user_id" not in session:
         return redirect("/login") 
     comment = request.form["comment"]
@@ -195,6 +207,7 @@ def register():
 
 @app.route("/create", methods=["POST"])
 def create():
+    check_csrf()
     username = request.form["username"]
     password1 = request.form["password1"]
     password2 = request.form["password2"]
@@ -214,17 +227,38 @@ def create():
 #KIRJAUTUMINEN
 @app.route("/login", methods=["GET", "POST"])
 def login():
+
     if request.method == "GET":
         return render_template("login.html")
-    username = request.form["username"]
-    password = request.form["password"]  
-    user_id = users.check_login(username, password)
-    if not user_id:
-        flash("VIRHE: väärä tunnus tai salasana")
-        return redirect("/login")
-    session["user_id"] = user_id
-    session["username"] = username
-    return redirect("/")
+    
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]  
+        
+        user_id = users.check_login(username, password)
+        if user_id:
+            session["user_id"] = user_id
+            session["username"] = username
+            session["csrf_token"] = secrets.token_hex(16)
+            return redirect("/")
+
+        else:
+            flash("VIRHE: väärä tunnus tai salasana")
+            return redirect("/login")
+
+
+
+#    if request.method == "GET":
+#        return render_template("login.html")
+#    username = request.form["username"]
+#    password = request.form["password"]  
+#    user_id = users.check_login(username, password)
+#    if not user_id:
+#        flash("VIRHE: väärä tunnus tai salasana")
+#        return redirect("/login")
+#    session["user_id"] = user_id
+#    session["username"] = username
+#    return redirect("/")
 
 @app.route("/logout")
 def logout():

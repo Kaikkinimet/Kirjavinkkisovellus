@@ -39,6 +39,7 @@
 
   <p>
     <input type="submit" value="Päivitä arvostelu">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="submit" name="cancel" value="Palaa takaisin">
   </p>
 </form>
