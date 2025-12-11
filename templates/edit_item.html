@@ -3,6 +3,7 @@
 {% block title %}Arvion muokkaus{% endblock %}
 
 {% block content %}
+
 <h2>Arvion muokkaus</h2>
 <form action="/update_item/{{ item.id }}" method="post">
 
@@ -11,13 +12,10 @@
     <input type="text" name="title" id="title" value="{{ item.title }}" maxlength="50" required>
   </p>
 
-
   <p>
     <label for="author">Kirjailijan nimi: </label> <br />
     <input type="text" name="author" id="author" value="{{ item.author }}" maxlength="50" required/>
   </p>
-
-
 
   {% for class in classes %}
   <p>
@@ -46,9 +44,6 @@
   </select>
 </p>
 
-
-
-
   </p>
   <p>
     <label for="description">Kuvaus: </label> <br />
@@ -61,4 +56,5 @@
     <input type="submit" name="cancel" value="Palaa takaisin">
   </p>
 </form>
+
 {% endblock %}

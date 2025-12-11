@@ -14,7 +14,6 @@ CREATE TABLE items (
     user_id INTEGER REFERENCES users(id)
 );
 
-
 CREATE TABLE classes (
     id INTEGER PRIMARY KEY,
     title TEXT,
@@ -28,12 +27,11 @@ CREATE TABLE item_classes (
     value TEXT
 );
 
-
 CREATE TABLE comments (
     id INTEGER PRIMARY KEY,
     item_id INTEGER REFERENCES items,
     user_id INTEGER REFERENCES users,
-    rate INTEGER, 
+    rate INTEGER,
     comment TEXT,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (item_id, user_id)

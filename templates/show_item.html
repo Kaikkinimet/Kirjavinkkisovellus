@@ -28,8 +28,8 @@
 <p><b>Arvosana:</b> ⭐️ {{ item.rate }}/5 </p>
 <p><b>Kuvaus:</b> {{ item.description }}</p>
 
-
 <h3>Uusi kommentti ja arvio</h3>
+{% if session.get("user_id") %}
 <form action ="/create_comment" method="post">
 <p>
   <label for="rate">Arvio (1–5):</label> <br>
@@ -45,9 +45,13 @@
     Kommentti: <br />
     <textarea name="comment" rows="8" cols="40" maxlength="500"></textarea>
     <input type="hidden" name="item_id" value="{{ item.id }}" />
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" /><br />
     <input type="submit" value="Lisää kommentti" />
 </form>
+{% else %}
+<p><a href="/login">Kirjaudu sisään lisätäksesi kommentin ja arvion</a></p>
+{% endif %}
+
 
 <h3>Kommentit ja arviot</h3>
 <ul>
