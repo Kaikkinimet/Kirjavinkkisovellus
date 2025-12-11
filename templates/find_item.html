@@ -6,9 +6,12 @@
 
 <h2>Etsi kirja</h2>
 <form action="/find_item" method="get">
+  
   <p>
-    hakusana: <input type="text" name="query" value="{{ query or ''}}">
+    <label for="query">Hakusana: </label>
+    <input type="text" name="query" id="query" value="{{ query or ''}}">
   </p>
+  
   <input type="submit" value="Lähetä">
 </form>
 

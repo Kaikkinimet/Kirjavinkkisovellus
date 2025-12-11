@@ -6,15 +6,6 @@
 
 <title>{{ item.title }}</title>
 
-<style>
-.comment {
-    white-space: pre-wrap;   
-    word-wrap: break-word;  
-    max-width: 600px;
-}
-</style>
-
-
 <h2>{{ item.title }}</h2>
 
 {% if session.get("user_id") == item.user_id %}

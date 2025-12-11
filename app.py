@@ -2,6 +2,7 @@ import secrets
 import sqlite3
 from flask import Flask
 from flask import abort, flash, redirect, render_template, request, session
+import markupsafe
 import config
 import db
 import items
@@ -25,6 +26,15 @@ def check_csrf():
 def index():
     all_items = items.get_items()
     return render_template("index.html", items=all_items)
+
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
+
+
+
 #============
 #KIRJA-ARVIOT
 #===========

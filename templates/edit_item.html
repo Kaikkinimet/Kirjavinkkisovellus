@@ -5,18 +5,24 @@
 {% block content %}
 <h2>Arvion muokkaus</h2>
 <form action="/update_item/{{ item.id }}" method="post">
+ 
   <p>
-    Kirjan nimi:<br>
-    <input type="text" name="title" value="{{ item.title }}" maxlength="50" required>
+    <label for="title">Kirjan nimi: </label> <br />
+    <input type="text" name="title" id="title" value="{{ item.title }}" maxlength="50" required>
   </p>
+
+
   <p>
-    Kirjailija:<br>
-    <input type="text" name="author" value="{{ item.author }}" maxlength="50" required/>
+    <label for="author">Kirjailijan nimi: </label> <br />
+    <input type="text" name="author" id="author" value="{{ item.author }}" maxlength="50" required/>
   </p>
+
+
+  
   {% for class in classes %}
   <p>
-    {{ class }}: <br>
-    <select name="classes" required>
+    <label for="class{{  class  }}">{{ class  }}</label>:<br />
+    <select name="classes" id="class{{ class  }}" required>
       <option value="">(valitse)</option>
       {% for option in all_classes[class] %}
       {% if classes[class] == option %}
@@ -28,13 +34,13 @@
     </select>
   </p>
     {% endfor %}
-    <p>  
-    Arvio (1-5):<br>
-    <input type="number" name="rate" min="1" max="5" value="{{ item.rate }}" size="10" required>
+  <p>
+    <label for="rate">Arvio (1–5):</label> <br>
+    <input type="number" name="rate" id="rate" min="1" max="5" value="{{ item.rate }}" size="10" required>
   </p>
-    <p>
-      Kuvaus:<br>
-      <textarea name="description" rows="8" cols="40">{{ item.description }}</textarea>
+  <p>
+    <label for="description">Kuvaus: </label> <br />
+    <textarea name="description" id="description" rows="8" cols="40">{{ item.description }}</textarea>
     </p>   
 
   <p>
