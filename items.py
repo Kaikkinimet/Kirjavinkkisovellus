@@ -3,14 +3,12 @@ import db
 def get_all_classes():
     sql = "SELECT title, value FROM classes ORDER BY id"
     reslut = db.query(sql)
-
     classes = {}
     for title, value in reslut:
         classes[title] = []
     for title, value in reslut:
         classes[title].append(value)
     return classes
-
 
 def add_item(title, author, description, rate, user_id, classes):   
     sql = """INSERT INTO items (title, author, description, rate, user_id) 
@@ -21,7 +19,6 @@ def add_item(title, author, description, rate, user_id, classes):
     for title, value in classes:
         db.execute(sql, [item_id, title, value])
     return item_id
-
 
 def add_class(item_id, title, value):
     sql = """INSERT INTO item_classes (item_id, title, value)
@@ -34,7 +31,6 @@ def get_classes(item_id):
             WHERE item_id = ?"""
     return db.query(sql, [item_id])
     
-
 def get_items():
     sql = """SELECT 
                 items.id, 
@@ -90,19 +86,6 @@ def remove_item(item_id):
     sql = "DELETE FROM items WHERE id = ?"
     db.execute(sql, [item_id])
 
-#def find_items(query):
-#    sql = """
-#        SELECT id, title
-#        FROM items
-#        WHERE title LIKE ?
-#        OR author LIKE ?
-#        OR genre LIKE ?
-#        OR description LIKE ?
-#        ORDER BY id DESC
-#    """
-#    like = "%" + query + "%"
-#    return db.query(sql, [like, like, like, like])
-
 def find_items(query):
     like = "%" + query + "%"
     sql = """
@@ -117,11 +100,6 @@ def find_items(query):
         ORDER BY items.id DESC
     """
     return db.query(sql, [like, like, like, like, like])
-
-
-
-
-
 
 def create_comment(item_id, user_id, rate, comment):
     sql = "INSERT INTO comments (item_id, user_id, rate, comment) VALUES (?, ?, ?, ?)"

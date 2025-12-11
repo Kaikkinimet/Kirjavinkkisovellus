@@ -28,6 +28,16 @@
   {% endif %}
   </p>
   
+  {% for message in get_flashed_messages() %}
+  
+  <div class="info">
+    {{ message }}
+  </div>
+  
+  </p>
+  
+  {% endfor %}
+
   {% block content %}{% endblock %}
 </body>
 

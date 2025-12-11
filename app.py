@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import abort, redirect, render_template, request, session
+from flask import abort, flash, redirect, render_template, request, session
 import config
 import db
 import items
@@ -17,7 +17,7 @@ def index():
 #============
 #KIRJA-ARVIOT
 #===========
-#----------------------------------
+
 #ARVIO LUOMINEN
 @app.route("/new_item")
 def new_item():
@@ -182,9 +182,9 @@ def create_comment():
     try:
         items.create_comment(item_id, user_id, rate, comment)
     except sqlite3.IntegrityError:
-        return "Olet jo kommentoinut tämän kirjan"
+        flash("Olet jo kommentoinut tämän kirjan")
+        return redirect("/item/" + str(item_id)) 
     return redirect("/item/" + str(item_id)) 
- 
 #============
 #KÄYTTÄJÄ
 #=============
@@ -199,13 +199,16 @@ def create():
     password1 = request.form["password1"]
     password2 = request.form["password2"]
     if not username or not password1 or not password2:
-        return "VIRHE: kaikki kentät täytettävä"
+        flash("VIRHE: kaikki kentät täytettävä")
+        return redirect("/register")
     if password1 != password2:
-        return "VIRHE: salasanat eivät ole samat"
+        flash("VIRHE: salasanat eivät ole samat")
+        return redirect("/register")
     try:
         users.create_user(username, password1)
     except sqlite3.IntegrityError:
-        return "VIRHE: tunnus on jo luotu"
+        flash("VIRHE: tunnus on jo luotu")
+        return redirect("/register")
     return redirect("/login")
 
 #KIRJAUTUMINEN
@@ -217,12 +220,8 @@ def login():
     password = request.form["password"]  
     user_id = users.check_login(username, password)
     if not user_id:
-        session.pop("user_id", None)
-        session.pop("username", None)
-        return render_template(
-            "login.html",
-            error="VIRHE: väärä tunnus tai salasana"
-        )    
+        flash("VIRHE: väärä tunnus tai salasana")
+        return redirect("/login")
     session["user_id"] = user_id
     session["username"] = username
     return redirect("/")
