@@ -1,12 +1,12 @@
-import secrets
 import sqlite3
+import secrets
+
 from flask import Flask
 from flask import abort, flash, redirect, render_template, request, session
 import markupsafe
+
 import config
-import db
 import items
-import re
 import users
 
 app = Flask(__name__)
@@ -33,13 +33,10 @@ def show_lines(content):
     content = content.replace("\n", "<br />")
     return markupsafe.Markup(content)
 
-
-
-#============
-#KIRJA-ARVIOT
-#===========
-
-#ARVIO LUOMINEN
+#==========
+#KIRJAT
+#==========
+#Kirjat: lisää
 @app.route("/new_item")
 def new_item():
     require_login()
@@ -50,16 +47,14 @@ def new_item():
 def create_items():
     require_login()
     check_csrf()
-
     if "user_id" not in session:
         return redirect("/login")
-
     title = request.form["title"]
     if not title or len(title) > 50:
         abort(403)
     author = request.form["author"]
     if not author or len(title) > 50:
-        abort(403)    
+        abort(403)
     all_classes = items.get_all_classes()
     classes = []
     for entry in request.form.getlist("classes"):
@@ -75,14 +70,12 @@ def create_items():
         abort(403)
     rate = request.form["rate"]
     if not rate:
-        abort(403)    
+        abort(403)
     user_id = session["user_id"]
     item_id = items.add_item(title, author, description, rate, user_id, classes)
     return redirect(f"/item/{item_id}")
 
-#----------------------------------
-#ARVIO MUOKKAAMINEN
-
+#Kirjat: muokkaa
 @app.route("/edit_item/<int:item_id>")
 def edit_item(item_id):
     require_login()
@@ -94,14 +87,12 @@ def edit_item(item_id):
     all_classes = items.get_all_classes()
     classes = {}
     for my_class in classes:
-        classes[my_class] = ""   
+        classes[my_class] = ""
     for entry in items.get_classes(item_id):
         classes[entry["title"]] = entry["value"]
     return render_template("edit_item.html", item=item, classes=classes, all_classes=all_classes)
 
-#----------------------------------
-#ARVIO PÄIVITYS
-
+#Kirjat: päivitä
 @app.route("/update_item/<int:item_id>", methods=["POST"])
 def update_item(item_id):
     require_login()
@@ -129,16 +120,14 @@ def update_item(item_id):
             classes.append((class_title, class_value))
     description = request.form["description"]
     if len(title) > 500:
-        abort(403)    
+        abort(403)
     rate = request.form["rate"]
     if not rate:
         abort(403)
     items.update_item(item_id, title, author, description, rate, classes)
     return redirect(f"/item/{item_id}")
 
-#----------------------------------
-#ARVION POISTAMINEN
-
+#Kirjat: poista
 @app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
 def remove_item(item_id):
     require_login()
@@ -149,7 +138,7 @@ def remove_item(item_id):
         abort(403)
     if request.method == "GET":
         item = items.get_item(item_id)
-        return render_template("remove_item.html", item=item)    
+        return render_template("remove_item.html", item=item)
     if request.method == "POST":
         check_csrf()
         if "remove" in request.form:
@@ -158,9 +147,7 @@ def remove_item(item_id):
         else:
             return redirect("/item/" + str(item_id))
 
-#----------------------------------
-#ARVIO NÄYTTÄMINEN JA ETSIMINEN
-
+#Kirjat: näytä
 @app.route("/item/<int:item_id>")
 def show_item(item_id):
     item = items.get_item(item_id)
@@ -170,26 +157,24 @@ def show_item(item_id):
     comments = items.get_comments(item_id)
     return render_template("show_item.html", item=item, classes=classes, comments=comments)
 
-
+#Kirjat: etsi
 @app.route("/find_item")
 def find_item():
     query = request.args.get("query", "")
     if query:
-        results = items.find_items(query)       
+        results = items.find_items(query)
     else:
         query = ""
         results = []
     return render_template("find_item.html", query=query, results=results)
 
-#----------------------------------
-#ARVIO KOMMENTOINTI
-
+#Kirjat: kommentoi
 @app.route("/create_comment", methods=["POST"])
 def create_comment():
     require_login()
     check_csrf()
     if "user_id" not in session:
-        return redirect("/login") 
+        return redirect("/login")
     comment = request.form["comment"]
     if len(comment) > 500:
         abort(403)
@@ -205,12 +190,13 @@ def create_comment():
         items.create_comment(item_id, user_id, rate, comment)
     except sqlite3.IntegrityError:
         flash("Olet jo kommentoinut tämän kirjan")
-        return redirect("/item/" + str(item_id)) 
-    return redirect("/item/" + str(item_id)) 
-#============
+        return redirect("/item/" + str(item_id))
+    return redirect("/item/" + str(item_id))
+
+#==========
 #KÄYTTÄJÄ
-#=============
-#REKSITERÖITYMINEN
+#==========
+#Käyttäjä: rekisteröityminen
 @app.route("/register")
 def register():
     return render_template("register.html")
@@ -234,42 +220,28 @@ def create():
         return redirect("/register")
     return redirect("/login")
 
-#KIRJAUTUMINEN
+#Käyttäjä: kirjautuminen
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
     if request.method == "GET":
         return render_template("login.html")
-    
+
     if request.method == "POST":
         username = request.form["username"]
-        password = request.form["password"]  
-        
+        password = request.form["password"]
+
         user_id = users.check_login(username, password)
         if user_id:
             session["user_id"] = user_id
             session["username"] = username
             session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
-
         else:
             flash("VIRHE: väärä tunnus tai salasana")
             return redirect("/login")
 
-
-
-#    if request.method == "GET":
-#        return render_template("login.html")
-#    username = request.form["username"]
-#    password = request.form["password"]  
-#    user_id = users.check_login(username, password)
-#    if not user_id:
-#        flash("VIRHE: väärä tunnus tai salasana")
-#        return redirect("/login")
-#    session["user_id"] = user_id
-#    session["username"] = username
-#    return redirect("/")
-
+#Käyttäjä: uloskirjautuminen
 @app.route("/logout")
 def logout():
     if "user_id" in session:
@@ -277,7 +249,7 @@ def logout():
         del session["username"]
     return redirect("/")
 
-#KÄYTTÄJÄSIVUT
+#Käyttäjä: näytä
 @app.route("/user/<int:user_id>")
 def show_user(user_id):
     user = users.get_user(user_id)

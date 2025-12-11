@@ -2,16 +2,17 @@ import db
 
 def get_all_classes():
     sql = "SELECT title, value FROM classes ORDER BY id"
-    reslut = db.query(sql)
+    result = db.query(sql)
     classes = {}
-    for title, value in reslut:
+    for title, value in result:
         classes[title] = []
-    for title, value in reslut:
+    for title, value in result:
         classes[title].append(value)
     return classes
 
-def add_item(title, author, description, rate, user_id, classes):   
-    sql = """INSERT INTO items (title, author, description, rate, user_id) 
+def add_item(title, author, description, rate, user_id, classes): # pylint: disable=too-many-arguments, too-many-positional-arguments
+
+    sql = """INSERT INTO items (title, author, description, rate, user_id)
                VALUES (?, ?, ?, ?, ?)"""
     item_id = db.execute(sql, [title, author, description, rate, user_id])
 
@@ -20,28 +21,29 @@ def add_item(title, author, description, rate, user_id, classes):
         db.execute(sql, [item_id, title, value])
     return item_id
 
+
 def add_class(item_id, title, value):
     sql = """INSERT INTO item_classes (item_id, title, value)
              VALUES (?, ?, ?)"""
     db.execute(sql, [item_id, title, value])
 
 def get_classes(item_id):
-    sql = """SELECT title, value 
-            FROM item_classes 
+    sql = """SELECT title, value
+            FROM item_classes
             WHERE item_id = ?"""
     return db.query(sql, [item_id])
-    
+
 def get_items():
-    sql = """SELECT 
-                items.id, 
-                items.title, 
-                items.author, 
-                items.rate, 
-                items.user_id, 
+    sql = """SELECT
+                items.id,
+                items.title,
+                items.author,
+                items.rate,
+                items.user_id,
                 users.username,
                 COUNT(comments.id) comment_count
-            FROM items 
-            JOIN users ON items.user_id = users.id 
+            FROM items
+            JOIN users ON items.user_id = users.id
             LEFT JOIN comments ON items.id = comments.item_id
                GROUP BY items.id
             ORDER BY items.id DESC"""
@@ -50,7 +52,7 @@ def get_items():
 
 def get_item(item_id):
     sql = """
-        SELECT 
+        SELECT
             items.id,
             items.title,
             items.author,
@@ -66,7 +68,7 @@ def get_item(item_id):
     return result[0] if result else None
 
 
-def update_item(item_id, title, author, description, rate, classes):
+def update_item(item_id, title, author, description, rate, classes): # pylint: disable=too-many-arguments, too-many-positional-arguments
     sql = """
         UPDATE items
         SET title = ?, author = ?, description = ?, rate = ?

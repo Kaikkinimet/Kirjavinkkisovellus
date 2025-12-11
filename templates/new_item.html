@@ -31,14 +31,23 @@
 {% endfor %}
 
 <p>
+  <label for="rate">Arvio (1–5):</label> <br>
+  <select name="rate" id="rate" required>
+    <option value="">(valitse)</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+  </select>
+</p>
+
+<p>
   <label for="description">Kuvaus: </label> <br />
   <textarea name="description" id="description" rows="8" cols="40" maxlength="500"></textarea>
 </p>
 
-<p>
-  <label for="rate">Arvio (1–5):</label> <br>
-  <input type="number" name="rate" id="rate" min="1" max="5" required>
-</p>
+
 
 <p>
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />

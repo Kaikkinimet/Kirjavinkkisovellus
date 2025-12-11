@@ -5,7 +5,7 @@
 {% block content %}
 <h2>Arvion muokkaus</h2>
 <form action="/update_item/{{ item.id }}" method="post">
- 
+
   <p>
     <label for="title">Kirjan nimi: </label> <br />
     <input type="text" name="title" id="title" value="{{ item.title }}" maxlength="50" required>
@@ -18,7 +18,7 @@
   </p>
 
 
-  
+
   {% for class in classes %}
   <p>
     <label for="class{{  class  }}">{{ class  }}</label>:<br />
@@ -36,12 +36,24 @@
     {% endfor %}
   <p>
     <label for="rate">Arvio (1–5):</label> <br>
-    <input type="number" name="rate" id="rate" min="1" max="5" value="{{ item.rate }}" size="10" required>
+    <select name="rate" id="rate" value="{{ item.rate }}" required>
+    <option value="">(valitse)</option>
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+  </select>
+</p>
+
+
+
+
   </p>
   <p>
     <label for="description">Kuvaus: </label> <br />
     <textarea name="description" id="description" rows="8" cols="40">{{ item.description }}</textarea>
-    </p>   
+    </p>
 
   <p>
     <input type="submit" value="Päivitä arvostelu">
