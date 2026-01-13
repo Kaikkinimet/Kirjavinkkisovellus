@@ -6,6 +6,7 @@
 
 <h2>Uusi kirja</h2>
 <form action="/create_items" method="post">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
 
 <p>
   <label for="title">Kirjan nimi: </label> <br />

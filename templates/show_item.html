@@ -31,6 +31,7 @@
 <h3>Uusi kommentti ja arvio</h3>
 {% if session.get("user_id") %}
 <form action ="/create_comment" method="post">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
 <p>
   <label for="rate">Arvio (1–5):</label> <br>
   <select name="rate" id="rate" required>
