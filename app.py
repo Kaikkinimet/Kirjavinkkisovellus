@@ -19,12 +19,14 @@ def require_login():
 
 def check_csrf():
     token = request.form.get("csrf_token")
+<<<<<<< HEAD
     if not token or token != session.get("csrf_token"):
+=======
+    if "csrf_token" not in request.form:
         abort(403)
-
-def ensure_csrf_token():
-    if "csrf_token" not in session:
-        session["csrf_token"] = secrets.token_hex(16)
+    if token != session["csrf_token"]:
+>>>>>>> f0f5653 (Fix pylint suggestions)
+        abort(403)
 
 @app.route("/")
 def index():
@@ -159,6 +161,7 @@ def show_item(item_id):
         abort(404)
     classes = items.get_classes(item_id)
     comments = items.get_comments(item_id)
+<<<<<<< HEAD
     comments_average = items.get_comments_average(item_id)
     images = items.get_images(item_id)
     return render_template(
@@ -169,6 +172,9 @@ def show_item(item_id):
         comments_average=comments_average,
         images=images
     )
+=======
+    return render_template("show_item.html", item=item, classes=classes, comments=comments)
+>>>>>>> f0f5653 (Fix pylint suggestions)
 
 ##KUVAT##
 @app.route("/images/<int:item_id>")
@@ -256,9 +262,6 @@ def create_comment():
     if not item:
         abort(403)
     user_id = session["user_id"]
-    if user_id == item["user_id"]:
-        flash("Et voi kommentoida omaa kirjaa")
-        return redirect("/item/" + str(item_id))
     try:
         items.create_comment(item_id, user_id, rate, comment)
     except sqlite3.IntegrityError:
@@ -266,6 +269,7 @@ def create_comment():
         return redirect("/item/" + str(item_id))
     return redirect("/item/" + str(item_id))
 
+<<<<<<< HEAD
 @app.route("/remove_comment/<int:comment_id>", methods=["POST"])
 def remove_comment(comment_id):
     require_login()
@@ -313,13 +317,14 @@ def update_comment(comment_id):
     items.update_comment(comment_id, rate, new_comment)
     return redirect("/item/" + str(comment["item_id"]))
 
+=======
+>>>>>>> f0f5653 (Fix pylint suggestions)
 #==========
 #KÄYTTÄJÄ
 #==========
 #Käyttäjä: rekisteröityminen
 @app.route("/register")
 def register():
-    ensure_csrf_token()
     return render_template("register.html")
 
 @app.route("/create", methods=["POST"])
@@ -346,7 +351,6 @@ def create():
 def login():
 
     if request.method == "GET":
-        ensure_csrf_token()
         return render_template("login.html")
     if request.method == "POST":
         username = request.form["username"]
