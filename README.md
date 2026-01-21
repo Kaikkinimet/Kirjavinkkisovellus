@@ -54,4 +54,3 @@ Seuraavassa kerrotaan millainen sovellus on ja miten sitä voi testata.
 - Muokkaa ja poista kirjavinkkejä
 - Tee hakutoimintoja
 - Kommentoi ja arvioi toisen käyttäjän tekemiä arvioita
-
