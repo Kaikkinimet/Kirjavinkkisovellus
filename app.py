@@ -10,17 +10,17 @@ import items
 import users
 
 app = Flask(__name__)
-app.secret_key = config.secret_key
+app.secret_key = config.SECRET_KEY
 
 def require_login():
     if "user_id" not in session:
         abort(403)
 
 def check_csrf():
-    token = request.form.get("cerf_token")
+    token = request.form.get("csrf_token")
     if "csrf_token" not in request.form:
         abort(403)
-    if request.form["csrf_token"] != session["csrf_token"]:
+    if token != session["csrf_token"]:
         abort(403)
 
 @app.route("/")
@@ -145,8 +145,8 @@ def remove_item(item_id):
         if "remove" in request.form:
             items.remove_item(item_id)
             return redirect("/")
-        else:
-            return redirect("/item/" + str(item_id))
+        return redirect("/item/" + str(item_id))
+    return redirect("/item/" + str(item_id))
 
 #Kirjat: näytä
 @app.route("/item/<int:item_id>")
@@ -227,7 +227,6 @@ def login():
 
     if request.method == "GET":
         return render_template("login.html")
-
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -238,9 +237,9 @@ def login():
             session["username"] = username
             session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
-        else:
-            flash("VIRHE: väärä tunnus tai salasana")
-            return redirect("/login")
+        flash("VIRHE: väärä tunnus tai salasana")
+        return redirect("/login")
+    return redirect("/login")
 
 #Käyttäjä: uloskirjautuminen
 @app.route("/logout")
@@ -256,5 +255,5 @@ def show_user(user_id):
     user = users.get_user(user_id)
     if not user:
         abort(404)
-    items = users.get_items(user_id)
-    return render_template("show_user.html", user=user, items=items)
+    user_items = users.get_items(user_id)
+    return render_template("show_user.html", user=user, items=user_items)
