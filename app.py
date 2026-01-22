@@ -19,10 +19,12 @@ def require_login():
 
 def check_csrf():
     token = request.form.get("csrf_token")
-    if "csrf_token" not in request.form:
+    if not token or token != session.get("csrf_token"):
         abort(403)
-    if token != session["csrf_token"]:
-        abort(403)
+
+def ensure_csrf_token():
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_hex(16)
 
 @app.route("/")
 def index():
@@ -157,9 +159,6 @@ def show_item(item_id):
         abort(404)
     classes = items.get_classes(item_id)
     comments = items.get_comments(item_id)
-<<<<<<< HEAD
-    return render_template("show_item.html", item=item, classes=classes, comments=comments)
-=======
     comments_average = items.get_comments_average(item_id)
     images = items.get_images(item_id)
     return render_template(
@@ -170,7 +169,6 @@ def show_item(item_id):
         comments_average=comments_average,
         images=images
     )
->>>>>>> f56a4f9 (Possible to add picture in an item)
 
 ##KUVAT##
 @app.route("/images/<int:item_id>")
@@ -240,6 +238,9 @@ def create_comment():
     if not item:
         abort(403)
     user_id = session["user_id"]
+    if user_id == item["user_id"]:
+        flash("Et voi kommentoida omaa kirjaa")
+        return redirect("/item/" + str(item_id))
     try:
         items.create_comment(item_id, user_id, rate, comment)
     except sqlite3.IntegrityError:
@@ -247,12 +248,60 @@ def create_comment():
         return redirect("/item/" + str(item_id))
     return redirect("/item/" + str(item_id))
 
+@app.route("/remove_comment/<int:comment_id>", methods=["POST"])
+def remove_comment(comment_id):
+    require_login()
+    check_csrf()
+    comment = items.get_comment(comment_id)
+    if not comment:
+        abort(404)
+    item = items.get_item(comment["item_id"])
+    if not item:
+        abort(404)
+    user_id = session["user_id"]
+    if user_id not in (comment["user_id"], item["user_id"]):
+        abort(403)
+    items.remove_comment(comment_id)
+    return redirect("/item/" + str(comment["item_id"]))
+
+@app.route("/edit_comment/<int:comment_id>")
+def edit_comment(comment_id):
+    require_login()
+    comment = items.get_comment(comment_id)
+    if not comment:
+        abort(404)
+    if comment["user_id"] != session["user_id"]:
+        abort(403)
+    item = items.get_item(comment["item_id"])
+    if not item:
+        abort(404)
+    return render_template("edit_comment.html", comment=comment, item=item)
+
+@app.route("/update_comment/<int:comment_id>", methods=["POST"])
+def update_comment(comment_id):
+    require_login()
+    check_csrf()
+    comment = items.get_comment(comment_id)
+    if not comment:
+        abort(404)
+    if comment["user_id"] != session["user_id"]:
+        abort(403)
+    new_comment = request.form["comment"]
+    if len(new_comment) > 500:
+        abort(403)
+    rate = int(request.form["rate"])
+    if rate < 1 or rate > 5:
+        abort(403)
+    items.update_comment(comment_id, rate, new_comment)
+    return redirect("/item/" + str(comment["item_id"]))
+
 #==========
 #KÄYTTÄJÄ
 #==========
 #Käyttäjä: rekisteröityminen
 @app.route("/register")
 def register():
+    ensure_csrf_token()
     return render_template("register.html")
 
 @app.route("/create", methods=["POST"])
@@ -279,6 +328,7 @@ def create():
 def login():
 
     if request.method == "GET":
+        ensure_csrf_token()
         return render_template("login.html")
     if request.method == "POST":
         username = request.form["username"]
