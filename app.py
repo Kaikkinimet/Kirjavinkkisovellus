@@ -20,7 +20,7 @@ def check_csrf():
     token = request.form.get("csrf_token")
     if "csrf_token" not in request.form:
         abort(403)
-    if not session.get("csrf_token") or token != session.get("csrf_token"):
+    if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
 
 def ensure_csrf_token():
