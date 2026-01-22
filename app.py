@@ -19,9 +19,7 @@ def require_login():
 
 def check_csrf():
     token = request.form.get("csrf_token")
-    if "csrf_token" not in request.form:
-        abort(403)
-    if request.form["csrf_token"] != session["csrf_token"]:
+    if not token or token != session.get("csrf_token"):
         abort(403)
 
 def ensure_csrf_token():
@@ -279,7 +277,7 @@ def remove_comment(comment_id):
     if not item:
         abort(404)
     user_id = session["user_id"]
-    if user_id != comment["user_id"] and user_id != item["user_id"]:
+    if user_id not in (comment["user_id"], item["user_id"]):
         abort(403)
     items.remove_comment(comment_id)
     return redirect("/item/" + str(comment["item_id"]))
