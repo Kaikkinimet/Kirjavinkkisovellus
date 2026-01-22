@@ -9,6 +9,7 @@ Seuraavassa kerrotaan millainen sovellus on ja miten sitä voi testata.
 - Käyttäjä voi kirjautua sisään ja ulos
 - Käyttäjä pystyy lisäämään sovellukseen kirjavinkkejä.
 - Käyttäjä muokkaamaan ja poistamaan lisäämiään kirjavinkkejä.
+- Käyttäjä voi llisätä kirjan kuvan
 - Kaikki näkevät sovellukseen lisätyt kirjavinkit.
 - Käyttäjä näkee sekä itse lisäämänsä että muiden käyttäjien lisäämät kirjavinkit.
 - Käyttäjä näkee omat käyttäjäsivut, josta näkee kuinka monta arvioita hän on tehnyt

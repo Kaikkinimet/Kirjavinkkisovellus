@@ -19,13 +19,9 @@ def require_login():
 
 def check_csrf():
     token = request.form.get("csrf_token")
-<<<<<<< HEAD
-    if not token or token != session.get("csrf_token"):
-=======
     if "csrf_token" not in request.form:
         abort(403)
     if token != session["csrf_token"]:
->>>>>>> f0f5653 (Fix pylint suggestions)
         abort(403)
 
 @app.route("/")
@@ -162,6 +158,8 @@ def show_item(item_id):
     classes = items.get_classes(item_id)
     comments = items.get_comments(item_id)
 <<<<<<< HEAD
+    return render_template("show_item.html", item=item, classes=classes, comments=comments)
+=======
     comments_average = items.get_comments_average(item_id)
     images = items.get_images(item_id)
     return render_template(
@@ -172,9 +170,7 @@ def show_item(item_id):
         comments_average=comments_average,
         images=images
     )
-=======
-    return render_template("show_item.html", item=item, classes=classes, comments=comments)
->>>>>>> f0f5653 (Fix pylint suggestions)
+>>>>>>> f56a4f9 (Possible to add picture in an item)
 
 ##KUVAT##
 @app.route("/images/<int:item_id>")
@@ -215,24 +211,6 @@ def show_image(image_id):
     response.headers.set("Content-Type", "image/png")
     return response
 
-@app.route("/remove_images", methods=["POST"])
-def remove_images():
-    require_login()
-
-    item_id = request.form["item_id"]
-    item = items.get_item(item_id)
-    if not item:
-        abort(404)
-    if item["user_id"] != session["user_id"]:
-        abort(403)
-
-    for image_id in request.form.getlist("image_id"):
-        items.remove_image(item_id, image_id)
-
-    return redirect("/images/" + str(item_id))
-
-
-
 #Kirjat: etsi
 @app.route("/find_item")
 def find_item():
@@ -269,56 +247,6 @@ def create_comment():
         return redirect("/item/" + str(item_id))
     return redirect("/item/" + str(item_id))
 
-<<<<<<< HEAD
-@app.route("/remove_comment/<int:comment_id>", methods=["POST"])
-def remove_comment(comment_id):
-    require_login()
-    check_csrf()
-    comment = items.get_comment(comment_id)
-    if not comment:
-        abort(404)
-    item = items.get_item(comment["item_id"])
-    if not item:
-        abort(404)
-    user_id = session["user_id"]
-    if user_id not in (comment["user_id"], item["user_id"]):
-        abort(403)
-    items.remove_comment(comment_id)
-    return redirect("/item/" + str(comment["item_id"]))
-
-@app.route("/edit_comment/<int:comment_id>")
-def edit_comment(comment_id):
-    require_login()
-    comment = items.get_comment(comment_id)
-    if not comment:
-        abort(404)
-    if comment["user_id"] != session["user_id"]:
-        abort(403)
-    item = items.get_item(comment["item_id"])
-    if not item:
-        abort(404)
-    return render_template("edit_comment.html", comment=comment, item=item)
-
-@app.route("/update_comment/<int:comment_id>", methods=["POST"])
-def update_comment(comment_id):
-    require_login()
-    check_csrf()
-    comment = items.get_comment(comment_id)
-    if not comment:
-        abort(404)
-    if comment["user_id"] != session["user_id"]:
-        abort(403)
-    new_comment = request.form["comment"]
-    if len(new_comment) > 500:
-        abort(403)
-    rate = int(request.form["rate"])
-    if rate < 1 or rate > 5:
-        abort(403)
-    items.update_comment(comment_id, rate, new_comment)
-    return redirect("/item/" + str(comment["item_id"]))
-
-=======
->>>>>>> f0f5653 (Fix pylint suggestions)
 #==========
 #KÄYTTÄJÄ
 #==========
