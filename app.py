@@ -2,12 +2,13 @@ import sqlite3
 import secrets
 
 from flask import Flask
-from flask import abort, flash, redirect, render_template, request, session
+from flask import abort, flash, make_response, redirect, render_template, request, session
 import markupsafe
 
 import config
 import items
 import users
+
 
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
@@ -161,13 +162,54 @@ def show_item(item_id):
     classes = items.get_classes(item_id)
     comments = items.get_comments(item_id)
     comments_average = items.get_comments_average(item_id)
+    images = items.get_images(item_id)
     return render_template(
         "show_item.html",
         item=item,
         classes=classes,
         comments=comments,
         comments_average=comments_average,
+        images=images
     )
+
+##KUVAT##
+@app.route("/images/<int:item_id>")
+def edit_images(item_id):
+    require_login()
+    item = items.get_item(item_id)
+    if not item:
+        abort(404)
+    if item["user_id"] != session["user_id"]:
+        abort(403)
+    images = items.get_images(item_id)
+    return render_template("images.html", item=item, images=images)
+
+@app.route("/add_image", methods=["POST"])
+def add_image():
+    require_login()
+    item_id = request.form["item_id"]
+    item = items.get_item(item_id)
+    if not item:
+        abort(404)
+    if item["user_id"] != session["user_id"]:
+        abort(403)
+    file = request.files["image"]
+    if not file.filename.endswith(".png"):
+        return "VIRHE: väärä tiedostomuoto"
+    image = file.read()
+    if len(image) > 100 * 1024:
+        return "VIRHE: liian suuri kuva"
+    items.add_image(item_id, image)
+    return redirect("/images/" + str(item_id))
+
+@app.route("/image/<int:image_id>")
+def show_image(image_id):
+    image = items.get_image(image_id)
+    if not image:
+        abort(404)
+    response = make_response(bytes(image))
+    response.headers.set("Content-Type", "image/png")
+    return response
 
 #Kirjat: etsi
 @app.route("/find_item")

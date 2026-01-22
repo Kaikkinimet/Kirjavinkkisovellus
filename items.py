@@ -136,3 +136,16 @@ def remove_comment(comment_id):
 def update_comment(comment_id, rate, comment):
     sql = "UPDATE comments SET rate = ?, comment = ? WHERE id = ?"
     db.execute(sql, [rate, comment, comment_id])
+
+def get_images(item_id):
+    sql = "SELECT id FROM images WHERE item_id =?"
+    return db.query(sql, [item_id])
+
+def add_image(item_id, image):
+    sql = "INSERT INTO images (item_id, images) VALUES (?, ?)"
+    db.execute(sql, [item_id, image])
+
+def get_image(image_id):
+    sql = "SELECT images FROM images WHERE id = ?"
+    result = db.query(sql, [image_id])
+    return result[0][0] if result else None

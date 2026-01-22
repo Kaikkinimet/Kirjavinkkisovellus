@@ -17,7 +17,7 @@ Kommenttien keskiarvo:
 {% if item.comment_average is not none %}
 ⭐️ {{ "%.1f"|format(item.comment_average)|replace(".", ",") }}/5
 {% else %}
-Ei arvioita vielä
+Ei muita arvioita vielä
 {% endif %}
 </div>
 {% endfor %}

@@ -28,6 +28,12 @@ CREATE TABLE item_classes (
     value TEXT
 );
 
+CREATE TABLE images (
+    id INTEGER PRIMARY KEY,
+    item_id INTEGER REFERENCES items,
+    images BLOB
+);
+
 CREATE TABLE comments (
     id INTEGER PRIMARY KEY,
     item_id INTEGER REFERENCES items,
