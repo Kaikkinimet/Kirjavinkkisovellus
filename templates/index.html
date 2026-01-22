@@ -10,8 +10,15 @@
 <div class="item">
 <a href="/item/{{ item.id }}"> {{ item.title }} </a><br />
 Kirjailija: {{ item.author }}<br />
-Lisääjä: <a href="/user/{{ item.user_id }}">{{ item.username }}</a><br />
+Lisääjä: <a href="/user/{{ item.user_id }}">{{ item.username }}</a> <small>({{ item.created_at }})</small><br />
 Kommenttien määrä: {{ item.comment_count }}
+<br />
+Kommenttien keskiarvo:
+{% if item.comment_average is not none %}
+⭐️ {{ "%.1f"|format(item.comment_average)|replace(".", ",") }}/5
+{% else %}
+Ei arvioita vielä
+{% endif %}
 </div>
 {% endfor %}
 </ul>

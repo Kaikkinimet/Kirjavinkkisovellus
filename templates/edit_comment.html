@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}Kommentin muokkaus{% endblock %}
+
+{% block content %}
+
+<h2>Kommentin muokkaus</h2>
+<p><b>Kirja:</b> {{ item.title }}</p>
+
+<form action="/update_comment/{{ comment.id }}" method="post">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+  <p>
+    <label for="rate">Arvio (1–5):</label> <br>
+    <select name="rate" id="rate" required>
+      <option value="">(valitse)</option>
+      {% for value in range(1, 6) %}
+      <option value="{{ value }}"{% if comment.rate == value %} selected{% endif %}>{{ value }}</option>
+      {% endfor %}
+    </select>
+  </p>
+  <p>
+    <label for="comment">Kommentti:</label> <br />
+    <textarea name="comment" id="comment" rows="8" cols="40" maxlength="500">{{ comment.comment }}</textarea>
+  </p>
+  <p>
+    <input type="submit" value="Päivitä kommentti" />
+    <a href="/item/{{ item.id }}">Palaa takaisin</a>
+  </p>
+</form>
+
+{% endblock %}

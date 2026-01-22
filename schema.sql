@@ -11,7 +11,8 @@ CREATE TABLE items (
     author TEXT,
     description TEXT,
     rate INTEGER,
-    user_id INTEGER REFERENCES users(id)
+    user_id INTEGER REFERENCES users(id),
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE classes (

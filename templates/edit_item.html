@@ -6,6 +6,7 @@
 
 <h2>Arvion muokkaus</h2>
 <form action="/update_item/{{ item.id }}" method="post">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
 
   <p>
     <label for="title">Kirjan nimi: </label> <br />

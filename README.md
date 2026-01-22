@@ -12,7 +12,8 @@ Seuraavassa kerrotaan millainen sovellus on ja miten sitä voi testata.
 - Kaikki näkevät sovellukseen lisätyt kirjavinkit.
 - Käyttäjä näkee sekä itse lisäämänsä että muiden käyttäjien lisäämät kirjavinkit.
 - Käyttäjä näkee omat käyttäjäsivut, josta näkee kuinka monta arvioita hän on tehnyt
-- Käyttäjät voivat kommentoida ja arvioida toisen lisättyjä kirjoja
+- Käyttäjät voivat kommentoida ja arvioida toisen lisättyjä kirjoja. Käyttäjä voi muokata omaa komenttia tai poistaa sen
+- Arvion lisääjä voi poistaa toisten tekemän kommentin
 - Kaikki pystyvät etsimään kaikkia kirjavinkkejä hakusanoilla, jotka etsivät kaikista kentistä.
 
 ***Kirjavinkit:***
@@ -54,4 +55,3 @@ Seuraavassa kerrotaan millainen sovellus on ja miten sitä voi testata.
 - Muokkaa ja poista kirjavinkkejä
 - Tee hakutoimintoja
 - Kommentoi ja arvioi toisen käyttäjän tekemiä arvioita
-

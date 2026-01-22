@@ -28,9 +28,11 @@
 <p><b>Arvosana:</b> ⭐️ {{ item.rate }}/5 </p>
 <p><b>Kuvaus:</b> {{ item.description }}</p>
 
+{% if not session.get("user_id") or session.get("user_id") != item.user_id %}
 <h3>Uusi kommentti ja arvio</h3>
 {% if session.get("user_id") %}
 <form action ="/create_comment" method="post">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
 <p>
   <label for="rate">Arvio (1–5):</label> <br>
   <select name="rate" id="rate" required>
@@ -51,9 +53,15 @@
 {% else %}
 <p><a href="/login">Kirjaudu sisään lisätäksesi kommentin ja arvion</a></p>
 {% endif %}
+{% endif %}
 
 
 <h3>Kommentit ja arviot</h3>
+{% if comments_average is not none %}
+<p><b>Keskiarvo:</b> ⭐️ {{ "%.1f"|format(comments_average)|replace(".", ",") }}/5</p>
+{% else %}
+<p><b>Keskiarvo:</b> Ei arvioita vielä</p>
+{% endif %}
 <ul>
     {% for co in comments %}
     <li>
@@ -61,6 +69,15 @@
         - ⭐️ {{ co.rate}} /5
         <small>({{co.created_at}})</small>
         <div class="comment"> {{ co.comment }}</div>
+        {% if session.get("user_id") == co.user_id %}
+        <p><a href="/edit_comment/{{ co.comment_id }}">Muokkaa kommenttia</a></p>
+        {% endif %}
+        {% if session.get("user_id") == co.user_id or session.get("user_id") == item.user_id %}
+        <form action="/remove_comment/{{ co.comment_id }}" method="post" onsubmit="return confirm('Haluatko poistaa kommentin?');">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+            <input type="submit" value="Poista kommentti" />
+        </form>
+        {% endif %}
     </li>
     {% endfor %}
 </ul>

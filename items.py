@@ -12,13 +12,13 @@ def get_all_classes():
 
 def add_item(title, author, description, rate, user_id, classes): # pylint: disable=too-many-arguments, too-many-positional-arguments
 
-    sql = """INSERT INTO items (title, author, description, rate, user_id)
-               VALUES (?, ?, ?, ?, ?)"""
+    sql = """INSERT INTO items (title, author, description, rate, user_id, created_at)
+               VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)"""
     item_id = db.execute(sql, [title, author, description, rate, user_id])
 
     sql = "INSERT INTO item_classes (item_id, title, value) VALUES (?, ?, ?)"
-    for title, value in classes:
-        db.execute(sql, [item_id, title, value])
+    for class_title, class_value in classes:
+        db.execute(sql, [item_id, class_title, class_value])
     return item_id
 
 
@@ -39,14 +39,16 @@ def get_items():
                 items.title,
                 items.author,
                 items.rate,
+                items.created_at,
                 items.user_id,
                 users.username,
+                AVG(comments.rate) comment_average,
                 COUNT(comments.id) comment_count
             FROM items
             JOIN users ON items.user_id = users.id
             LEFT JOIN comments ON items.id = comments.item_id
                GROUP BY items.id
-            ORDER BY items.id DESC"""
+            ORDER BY items.title COLLATE NOCASE"""
     return db.query(sql)
 
 
@@ -80,8 +82,8 @@ def update_item(item_id, title, author, description, rate, classes): # pylint: d
     db.execute(sql, [item_id])
 
     sql = "INSERT INTO item_classes (item_id, title, value) VALUES (?, ?, ?)"
-    for title, value in classes:
-        db.execute(sql, [item_id, title, value])
+    for class_title, class_value in classes:
+        db.execute(sql, [item_id, class_title, class_value])
 
 def remove_item(item_id):
     sql = "DELETE FROM items WHERE id = ?"
@@ -107,9 +109,30 @@ def create_comment(item_id, user_id, rate, comment):
     db.execute(sql, [item_id, user_id, rate, comment])
 
 def get_comments(item_id):
-    sql = """SELECT comment, rate, created_at, users.id user_id, users.username
+    sql = """SELECT comments.id comment_id, comment, rate, created_at,
+                    users.id user_id, users.username
             FROM comments, users
             WHERE comments.item_id = ? AND comments.user_id = users.id
             ORDER BY created_at DESC
         """
     return db.query(sql, [item_id])
+
+def get_comments_average(item_id):
+    sql = "SELECT AVG(rate) FROM comments WHERE item_id = ?"
+    result = db.query(sql, [item_id])
+    return result[0][0] if result and result[0][0] is not None else None
+
+def get_comment(comment_id):
+    sql = """SELECT id, item_id, user_id, rate, comment
+             FROM comments
+             WHERE id = ?"""
+    result = db.query(sql, [comment_id])
+    return result[0] if result else None
+
+def remove_comment(comment_id):
+    sql = "DELETE FROM comments WHERE id = ?"
+    db.execute(sql, [comment_id])
+
+def update_comment(comment_id, rate, comment):
+    sql = "UPDATE comments SET rate = ?, comment = ? WHERE id = ?"
+    db.execute(sql, [rate, comment, comment_id])

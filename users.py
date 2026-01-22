@@ -24,5 +24,5 @@ def get_user(user_id):
     return rows[0] if rows else None
 
 def get_items(user_id):
-    sql = "SELECT id, title FROM items WHERE user_id = ? ORDER BY id DESC"
+    sql = "SELECT id, title FROM items WHERE user_id = ? ORDER BY title COLLATE NOCASE"
     return db.query(sql, [user_id])
