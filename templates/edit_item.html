@@ -4,7 +4,12 @@
 
 {% block content %}
 
-<h2>Arvion muokkaus</h2>
+<h2>{{ item.title }}</h2>
+<h3>Arvion muokkaus</h3>
+<p>
+  Ilmoitus: <a href="/item/{{ item.id }}">Takaisin arvioon</a>
+</p>
+
 <form action="/update_item/{{ item.id }}" method="post">
   <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
 
