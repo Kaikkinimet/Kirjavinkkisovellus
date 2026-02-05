@@ -38,7 +38,6 @@ Seuraavassa kerrotaan millainen sovellus on ja miten sitä voi testata.
  $ python3 -m venv venv
  $ source venv/bin/activate
  $ pip install flask
- $ pip install werkzeug
 ```
 ***Luo tietokanta***
 ```
@@ -56,3 +55,4 @@ Seuraavassa kerrotaan millainen sovellus on ja miten sitä voi testata.
 - Muokkaa ja poista kirjavinkkejä
 - Tee hakutoimintoja
 - Kommentoi ja arvioi toisen käyttäjän tekemiä arvioita
+
