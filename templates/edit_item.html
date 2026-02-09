@@ -7,60 +7,60 @@
 <h2>{{ item.title }}</h2>
 <h3>Arvion muokkaus</h3>
 <p>
-  Ilmoitus: <a href="/item/{{ item.id }}">Takaisin arvioon</a>
+    Ilmoitus: <a href="/item/{{ item.id }}">Takaisin arvioon</a>
 </p>
 
 <form action="/update_item/{{ item.id }}" method="post">
-  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
 
-  <p>
-    <label for="title">Kirjan nimi: </label> <br />
-    <input type="text" name="title" id="title" value="{{ item.title }}" maxlength="50" required>
-  </p>
-
-  <p>
-    <label for="author">Kirjailijan nimi: </label> <br />
-    <input type="text" name="author" id="author" value="{{ item.author }}" maxlength="50" required/>
-  </p>
-
-  {% for class in classes %}
-  <p>
-    <label for="class{{  class  }}">{{ class  }}</label>:<br />
-    <select name="classes" id="class{{ class  }}" required>
-      <option value="">(valitse)</option>
-      {% for option in all_classes[class] %}
-      {% if classes[class] == option %}
-      <option value="{{ class }}:{{ option }}" selected>{{ option }}</option>
-      {% else %}
-      <option value="{{ class }}:{{ option }}">{{ option }}</option>
-      {% endif %}
-      {% endfor %}
-    </select>
-  </p>
-    {% endfor %}
-  <p>
-    <label for="rate">Arvio (1–5):</label> <br>
-    <select name="rate" id="rate" value="{{ item.rate }}" required>
-    <option value="">(valitse)</option>
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
-    <option value="5">5</option>
-  </select>
-</p>
-
-  </p>
-  <p>
-    <label for="description">Kuvaus: </label> <br />
-    <textarea name="description" id="description" rows="8" cols="40">{{ item.description }}</textarea>
+    <p>
+        <label for="title">Kirjan nimi: </label> <br />
+        <input type="text" name="title" id="title" value="{{ item.title }}" maxlength="50" required>
     </p>
 
-  <p>
-    <input type="submit" value="Päivitä arvostelu">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <input type="submit" name="cancel" value="Palaa takaisin">
-  </p>
+    <p>
+        <label for="author">Kirjailijan nimi: </label> <br />
+        <input type="text" name="author" id="author" value="{{ item.author }}" maxlength="50" required/>
+    </p>
+
+    {% for class in classes %}
+    <p>
+        <label for="class{{  class  }}">{{ class  }}</label>:<br />
+        <select name="classes" id="class{{ class  }}" required>
+            <option value="">(valitse)</option>
+            {% for option in all_classes[class] %}
+            {% if classes[class] == option %}
+            <option value="{{ class }}:{{ option }}" selected>{{ option }}</option>
+            {% else %}
+            <option value="{{ class }}:{{ option }}">{{ option }}</option>
+            {% endif %}
+            {% endfor %}
+        </select>
+    </p>
+        {% endfor %}
+    <p>
+        <label for="rate">Arvio (1–5):</label> <br>
+        <select name="rate" id="rate" value="{{ item.rate }}" required>
+        <option value="">(valitse)</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
+</p>
+
+    </p>
+    <p>
+        <label for="description">Kuvaus: </label> <br />
+        <textarea name="description" id="description" rows="8" cols="40">{{ item.description }}</textarea>
+        </p>
+
+    <p>
+        <input type="submit" value="Päivitä arvostelu">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+        <input type="submit" name="cancel" value="Palaa takaisin">
+    </p>
 </form>
 
 {% endblock %}

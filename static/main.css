@@ -1,21 +1,26 @@
 body {
-  margin: auto;
+  margin: 0;
+  padding: 0;
   max-width: 50em;
-  font-family: sans-serif;
-  background-color: lightblue;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: 'Quicksand', sans-serif;
+  background-color: #f7f3f0;
+  color: #333;
 }
 
 .item {
-  border: 2px solid black;
-  margin: 1em;
-  padding: 0.2em 0.5em;
+  background-color: #ffffff;
+  margin: 1.2em 0;
+  padding: 1em 1.2em;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-
 .info {
-  border: 2px solid black;
-  margin: 1em;
-  padding: 0.5em;
-  background-color: blue;
-  color: white;
+  background-color: #e8dff5;
+  color: #4b3f72;
+  margin: 1.2em 0;
+  padding: 1em 1.2em;
+  border-radius: 12px;
 }

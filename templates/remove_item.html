@@ -10,10 +10,10 @@
 <p>Haluatko varmasti poistaa tämän arvion?</p>
 
 <form action="/remove_item/{{ item.id }}" method="post">
-  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <input type="submit" name="remove" value="Poista arvio">
-    <input type="submit" name="cancel" value="Palaa takaisin">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+        <input type="submit" name="remove" value="Poista arvio">
+        <input type="submit" name="cancel" value="Palaa takaisin">
 </form>
 
 {% endblock %}

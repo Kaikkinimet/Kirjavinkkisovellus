@@ -6,50 +6,50 @@
 
 <h2>Uusi kirja</h2>
 <form action="/create_items" method="post">
-  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
 
 <p>
-  <label for="title">Kirjan nimi: </label> <br />
-  <input type="text" name="title" id="title" maxlength="50" required>
+    <label for="title">Kirjan nimi: </label> <br />
+    <input type="text" name="title" id="title" maxlength="50" required>
 </p>
 
 <p>
-  <label for="author">Kirjailijan nimi: </label> <br />
-  <input type="text" name="author" id="author" maxlength="50" required>
+    <label for="author">Kirjailijan nimi: </label> <br />
+    <input type="text" name="author" id="author" maxlength="50" required>
 </p>
 
 {% for class in classes %}
 <p>
-  <label for="class{{  class  }}">{{ class  }}</label>:<br />
-  <select name="classes" id="class{{ class  }}" required>
-    <option value="">(valitse)</option>
-    {% for option in classes[class] %}
-    <option value="{{ class }}:{{ option }}">{{ option }}</option>
-    {% endfor %}
-  </select>
+    <label for="class{{  class  }}">{{ class  }}</label>:<br />
+    <select name="classes" id="class{{ class  }}" required>
+        <option value="">(valitse)</option>
+        {% for option in classes[class] %}
+        <option value="{{ class }}:{{ option }}">{{ option }}</option>
+        {% endfor %}
+    </select>
 </p>
 {% endfor %}
 
 <p>
-  <label for="rate">Arvio (1–5):</label> <br>
-  <select name="rate" id="rate" required>
-    <option value="">(valitse)</option>
-    <option value="1">1</option>
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
-    <option value="5">5</option>
-  </select>
+    <label for="rate">Arvio (1–5):</label> <br>
+    <select name="rate" id="rate" required>
+        <option value="">(valitse)</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
 </p>
 
 <p>
-  <label for="description">Kuvaus: </label> <br />
-  <textarea name="description" id="description" rows="8" cols="40" maxlength="500"></textarea>
+    <label for="description">Kuvaus: </label> <br />
+    <textarea name="description" id="description" rows="8" cols="40" maxlength="500"></textarea>
 </p>
 
 <p>
-  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-  <input type="submit" value="Luo arvostelu">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    <input type="submit" value="Luo arvostelu">
 </p>
 
 </form>
