@@ -61,4 +61,3 @@ Seuraavassa kerrotaan millainen sovellus on ja miten sitä voi testata.
 ## **Suuren tietomäärän käsittely:**
 - Sovellusta testattiin suurella tietomäärällä seed.py -skriptin avulla. Tietokantaan generoitiin 1000 käyttäjää, 100 000 kirja-arviota ja 1 000 000 kommenttia, ja jokaiselle arviolle lisättiin luokittelut. Tällä datalla sovellus toimii edelleen oikein, mutta hakujen ja etusivun listauksen vasteaika kasvoi. Sovellukseen otettiin käyttöön tietokohteiden sivutus ja tietokantaan lisättiin indeksit, jotka nopeuttavat suuren tietomäärän käsittelylä.
 - Ajanmittaus etusivun kyselyssä: ilman indeksejä ja sivutusta 1,0076 s. Sivutuksen ja indeksoinnin jälkeen 0,8998 s.
-

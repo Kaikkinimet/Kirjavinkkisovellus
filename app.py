@@ -1,5 +1,4 @@
 import math
-import sqlite3
 import secrets
 
 from flask import Flask
@@ -253,9 +252,7 @@ def create_comment():
     if user_id == item["user_id"]:
         flash("Et voi kommentoida omaa kirjaa")
         return redirect("/item/" + str(item_id))
-    try:
-        items.create_comment(item_id, user_id, rate, comment)
-    except sqlite3.IntegrityError:
+    if not items.create_comment(item_id, user_id, rate, comment):
         flash("Olet jo kommentoinut tämän kirjan")
         return redirect("/item/" + str(item_id))
     return redirect("/item/" + str(item_id))
@@ -328,9 +325,7 @@ def create():
     if password1 != password2:
         flash("VIRHE: Salasanat eivät ole samat")
         return redirect("/register")
-    try:
-        users.create_user(username, password1)
-    except sqlite3.IntegrityError:
+    if not users.create_user(username, password1):
         flash("VIRHE: Tunnus on jo luotu")
         return redirect("/register")
     flash("Tunnus luotu onnistuneesti")

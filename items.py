@@ -1,3 +1,4 @@
+import sqlite3
 import db
 
 def get_all_classes():
@@ -114,7 +115,11 @@ def find_items(query):
 
 def create_comment(item_id, user_id, rate, comment):
     sql = "INSERT INTO comments (item_id, user_id, rate, comment) VALUES (?, ?, ?, ?)"
-    db.execute(sql, [item_id, user_id, rate, comment])
+    try:
+        db.execute(sql, [item_id, user_id, rate, comment])
+    except sqlite3.IntegrityError:
+        return False
+    return True
 
 def get_comments(item_id):
     sql = """SELECT comments.id comment_id, comment, rate, created_at,
