@@ -33,7 +33,12 @@ def get_classes(item_id):
             WHERE item_id = ?"""
     return db.query(sql, [item_id])
 
-def get_items():
+def item_count():
+    sql = "SELECT COUNT(*) FROM items"
+    result = db.query(sql)
+    return result[0][0] if result else 0
+
+def get_items(page, page_size):
     sql = """SELECT
                 items.id,
                 items.title,
@@ -48,8 +53,11 @@ def get_items():
             JOIN users ON items.user_id = users.id
             LEFT JOIN comments ON items.id = comments.item_id
                GROUP BY items.id
-            ORDER BY items.title COLLATE NOCASE"""
-    return db.query(sql)
+            ORDER BY items.title COLLATE NOCASE
+            LIMIT ? OFFSET ?"""
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, [limit, offset])
 
 
 def get_item(item_id):

@@ -5,6 +5,7 @@
 {% block content %}
 
 <h2>Uusi kirja</h2>
+<p>Voit lisätä kuvan tallennuksen jälkeen.</p>
 <form action="/create_items" method="post">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
 

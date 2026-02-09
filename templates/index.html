@@ -23,4 +23,17 @@ Ei muita arvioita vielä
 {% endfor %}
 </ul>
 
+<p>
+  {% if page > 1 %}
+  <a href="/1">Alkuun</a>
+  <a href="/{{ page - 1 }}">&lt;&lt;</a>
+  {% endif %}
+  Sivu {{ page }}/{{ page_count }}
+  {% if page < page_count %}
+  <a href="/{{ page + 1 }}">&gt;&gt;</a>
+  <a href="/{{ page_count }}">Viimeinen sivu</a>
+  {% endif %}
+</p>
+<hr />
+
 {% endblock %}

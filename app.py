@@ -1,3 +1,4 @@
+import math
 import sqlite3
 import secrets
 
@@ -27,9 +28,20 @@ def ensure_csrf_token():
         session["csrf_token"] = secrets.token_hex(16)
 
 @app.route("/")
-def index():
-    all_items = items.get_items()
-    return render_template("index.html", items=all_items)
+@app.route("/<int:page>")
+def index(page=1):
+    page_size = 10
+    item_count = items.item_count()
+    page_count = math.ceil(item_count / page_size)
+    page_count = max(page_count, 1)
+
+    if page < 1:
+        return redirect("/1")
+    if page > page_count:
+        return redirect("/" + str(page_count))
+
+    all_items = items.get_items(page, page_size)
+    return render_template("index.html", items=all_items, page=page, page_count=page_count)
 
 @app.template_filter()
 def show_lines(content):

@@ -1,29 +1,26 @@
-<!DOCTYPE html>
-<html>
+{% extends "layout.html" %}
 
-<head>
-        <title>Ilmoituksen kuvat</title>
-</head>
+{% block title %}Ilmoituksen kuvat{% endblock %}
 
-<body>
-        <h1>Ilmoituksen kuvat</h1>
+{% block content %}
 
-        <p>
-                Ilmoituksessa on {{ images | count }} kuvaa.
-        </p>
+<h2>Ilmoituksen kuvat</h2>
 
-        <h2>Lisää kuva</h2>
-        <form action="/add_image" method="POST" enctype="multipart/form-data">
-                <p>
-                        Kuva: <input type="file" name="image" accept=".png" />
-                </p>
-                <input type="hidden" name="item_id" value="{{  item.id  }}">
-                <input type="submit" value="Lähetä" />
-        </form>
+<p>
+  Ilmoituksessa on {{ images | count }} kuvaa.
+</p>
 
-        <p>
-                <a href="/"item{{ itemid }}>Takaisin</a>
-        </p>
+<h3>Lisää kuva</h3>
+<form action="/add_image" method="POST" enctype="multipart/form-data">
+  <p>
+    Kuva: <input type="file" name="image" accept=".png" />
+  </p>
+  <input type="hidden" name="item_id" value="{{ item.id }}">
+  <input type="submit" value="Lähetä" />
+</form>
 
-</body>
-</html>
+<p>
+  <a href="/item/{{ item.id }}">Takaisin</a>
+</p>
+
+{% endblock %}

@@ -43,3 +43,10 @@ CREATE TABLE comments (
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (item_id, user_id)
 );
+
+CREATE INDEX idx_comments_item_id ON comments (item_id);
+CREATE INDEX idx_items_user_id ON items (user_id);
+CREATE INDEX idx_item_classes_item_id ON item_classes (item_id);
+CREATE INDEX idx_comments_user_id ON comments (user_id);
+CREATE INDEX idx_items_title ON items (title);
+CREATE INDEX idx_items_author ON items (author);

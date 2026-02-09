@@ -8,14 +8,6 @@
 
 <h2>{{ item.title }}</h2>
 
-{% if session.get("user_id") == item.user_id %}
-<p>
-        <a href="/edit_item/{{ item.id }}" >Muokkaa</a>
-        <a href="/remove_item/{{ item.id }}" >Poista</a>
-        <a href="/images/{{ item.id }}" >Kuvat</a>
-</p>
-{% endif %}
-
 {% for image in images %}
 <img src="/image/{{ image.id }}" />
 {% endfor %}
@@ -33,7 +25,20 @@
 <p><b>Arvosana:</b> ⭐️ {{ item.rate }}/5 </p>
 <p><b>Kuvaus:</b><br />{{ item.description | show_lines }}</p>
 
+{% if session.get("user_id") == item.user_id %}
+<p>
+        <a href="/images/{{ item.id }}">Lisää kuva</a>
+        <form action="/edit_item/{{ item.id }}" method="get" style="display: inline;">
+                <input type="submit" value="Muokkaa">
+        </form>
+        <form action="/remove_item/{{ item.id }}" method="get" style="display: inline;">
+                <input type="submit" value="Poista">
+        </form>
+</p>
+{% endif %}
+
 {% if not session.get("user_id") or session.get("user_id") != item.user_id %}
+<hr />
 <h3>Uusi kommentti ja arvio</h3>
 {% if session.get("user_id") %}
 <form action="/create_comment" method="post">
