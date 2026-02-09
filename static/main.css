@@ -1,3 +1,11 @@
+.header {
+  background-color: #c3a3af;
+  color: #3e1f2d;
+  padding: 1.5em;
+  margin: 1em 0;
+  border-radius: 0 0 18px 18px;
+}
+
 body {
   margin: 0;
   padding: 0;
