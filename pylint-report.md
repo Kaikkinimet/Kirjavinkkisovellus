@@ -78,7 +78,8 @@ Your code has been rated at 8.68/10 (previous run: 8.67/10, +0.00)
 
 Käydään seuraavaksi läpi tarkemmin raportin sisältö ja perustellaan, miksi kyseisiä asioita ei ole korjattu sovelluksessa.
 
-***Docstring-ilmoitukset***
+## **Docstring-ilmoitukset**
+
 Suurin osa raportoin ilmoituksista on seuraavan tyyppisiä ilmoituksia:
 ```
 app.py:1:0: C0114: Missing module docstring (missing-module-docstring)
@@ -87,7 +88,7 @@ app.py:16:0: C0116: Missing function or method docstring (missing-function-docst
 Nämä ilmoitukset tarkoittavat, että moduuleissa ja funktioissa ei ole docstring-kommentteja. Sovelluksen kehityksessä on tehty tietoisesti päätös kurssimateriaaliin perustuen, ettei docstring-kommentteja käytetä järjestelmällisesti.
 
 
-***Too many arguments -ilmoitukset***
+## **Too many arguments -ilmoitukset**
 ```
 items.py:14:0: R0913: Too many arguments (6/5) (too-many-arguments)
 ```
