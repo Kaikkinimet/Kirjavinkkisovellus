@@ -10,14 +10,29 @@
   Ilmoituksessa on {{ images | count }} kuvaa.
 </p>
 
-<h3>Lisää kuva</h3>
+<h3>Lisää kuva <small>(.png muoto)</small></h3>
+
 <form action="/add_image" method="POST" enctype="multipart/form-data">
   <p>
     Kuva: <input type="file" name="image" accept=".png" />
   </p>
   <input type="hidden" name="item_id" value="{{ item.id }}">
   <input type="submit" value="Lähetä" />
+  <br>
 </form>
+
+<form action="/remove_images" method="post" onsubmit="return confirm('Oletko varma, että haluat poistaa kuvan?');" style="margin-top: 8px;">
+  {%  for image in images %}
+  <input type="checkbox" name="image_id" value="{{ image.id  }}">
+  <img src="/image/{{ image.id  }}" />
+  {%  endfor %}
+  <input type="hidden" name="item_id" value="{{ item.id}}">
+  <p>
+  <input type="submit" value="Poista valitut kuvat" />
+  </p>
+</form>
+
+
 
 <p>
   <a href="/item/{{ item.id }}">Takaisin</a>

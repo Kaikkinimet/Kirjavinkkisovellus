@@ -40,13 +40,13 @@
         {% endfor %}
     <p>
         <label for="rate">Arvio (1–5):</label> <br>
-        <select name="rate" id="rate" value="{{ item.rate }}" required>
+        <select name="rate" id="rate" required>
         <option value="">(valitse)</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
+        <option value="1" {% if item.rate|string == "1" %}selected{% endif %}>1</option>
+        <option value="2" {% if item.rate|string == "2" %}selected{% endif %}>2</option>
+        <option value="3" {% if item.rate|string == "3" %}selected{% endif %}>3</option>
+        <option value="4" {% if item.rate|string == "4" %}selected{% endif %}>4</option>
+        <option value="5" {% if item.rate|string == "5" %}selected{% endif %}>5</option>
     </select>
 </p>
 
