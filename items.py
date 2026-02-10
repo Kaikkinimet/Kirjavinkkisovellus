@@ -11,7 +11,7 @@ def get_all_classes():
         classes[title].append(value)
     return classes
 
-def add_item(title, author, description, rate, user_id, classes): # pylint: disable=too-many-arguments, too-many-positional-arguments
+def add_item(title, author, description, rate, user_id, classes):
 
     sql = """INSERT INTO items (title, author, description, rate, user_id, created_at)
                VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)"""
@@ -21,7 +21,6 @@ def add_item(title, author, description, rate, user_id, classes): # pylint: disa
     for class_title, class_value in classes:
         db.execute(sql, [item_id, class_title, class_value])
     return item_id
-
 
 def add_class(item_id, title, value):
     sql = """INSERT INTO item_classes (item_id, title, value)
@@ -60,7 +59,6 @@ def get_items(page, page_size):
     offset = page_size * (page - 1)
     return db.query(sql, [limit, offset])
 
-
 def get_item(item_id):
     sql = """
         SELECT
@@ -78,8 +76,7 @@ def get_item(item_id):
     result = db.query(sql, [item_id])
     return result[0] if result else None
 
-
-def update_item(item_id, title, author, description, rate, classes): # pylint: disable=too-many-arguments, too-many-positional-arguments
+def update_item(item_id, title, author, description, rate, classes):
     sql = """
         UPDATE items
         SET title = ?, author = ?, description = ?, rate = ?

@@ -29,10 +29,10 @@
 <p>
         <a href="/images/{{ item.id }}">Lisää kuva</a>
         <form action="/edit_item/{{ item.id }}" method="get" style="display: inline;">
-                <input type="submit" value="Muokkaa">
+                <input type="submit" value="Muokkaa arviota">
         </form>
         <form action="/remove_item/{{ item.id }}" method="get" style="display: inline;">
-                <input type="submit" value="Poista">
+                <input type="submit" value="Poista arvio">
         </form>
 </p>
 {% endif %}
@@ -65,7 +65,6 @@
 {% endif %}
 {% endif %}
 
-
 <h3>Kommentit ja arviot</h3>
 {% if comments_average is not none %}
 <p><b>Keskiarvo:</b> ⭐️ {{ "%.1f"|format(comments_average)|replace(".", ",") }}/5</p>
@@ -79,14 +78,20 @@
                 - ⭐️ {{ co.rate}} /5
                 <small>({{ co.created_at.split(" ")[0] }})</small>
                 <div class="comment"> {{ co.comment }}</div>
-                {% if session.get("user_id") == co.user_id %}
-                <p><a href="/edit_comment/{{ co.comment_id }}">Muokkaa kommenttia</a></p>
-                {% endif %}
                 {% if session.get("user_id") == co.user_id or session.get("user_id") == item.user_id %}
-                <form action="/remove_comment/{{ co.comment_id }}" method="post" onsubmit="return confirm('Haluatko poistaa kommentin?');">
-                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-                        <input type="submit" value="Poista kommentti" />
-                </form>
+                <div class="comment-actions">
+                        {% if session.get("user_id") == co.user_id %}
+                        <form action="/edit_comment/{{ co.comment_id }}" method="get" style="display: inline-block; margin-right: 8px;">
+                                <input type="submit" value="Muokkaa kommenttia" />
+                        </form>
+                        {% endif %}
+                        {% if session.get("user_id") == co.user_id or session.get("user_id") == item.user_id %}
+                        <form action="/remove_comment/{{ co.comment_id }}" method="post" onsubmit="return confirm('Haluatko poistaa kommentin?');" style="display: inline-block;">
+                                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+                                <input type="submit" value="Poista kommentti" />
+                        </form>
+                        {% endif %}
+                </div>
                 {% endif %}
         </li>
         {% endfor %}
