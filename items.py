@@ -12,7 +12,6 @@ def get_all_classes():
     return classes
 
 def add_item(title, author, description, rate, user_id, classes):
-
     sql = """INSERT INTO items (title, author, description, rate, user_id, created_at)
                VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)"""
     item_id = db.execute(sql, [title, author, description, rate, user_id])
