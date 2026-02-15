@@ -54,8 +54,9 @@ Seuraavassa kerrotaan millainen sovellus on ja miten sitä voi testata.
 - Kirjaudu sisään/ulos
 - Lisää kirjavinkkejä
 - Muokkaa ja poista kirjavinkkejä
-- Tee hakutoimintoja
 - Kommentoi ja arvioi toisen käyttäjän tekemiä arvioita
+- Tee hakutoimintoja
+- Kokeile hakea vinkkejä ilmann kirjautumatta
 
 -------------------
 ## **Suuren tietomäärän käsittely:**
