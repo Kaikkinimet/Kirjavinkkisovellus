@@ -33,12 +33,10 @@ def index(page=1):
     item_count = items.item_count()
     page_count = math.ceil(item_count / page_size)
     page_count = max(page_count, 1)
-
     if page < 1:
         return redirect("/1")
     if page > page_count:
         return redirect("/" + str(page_count))
-
     all_items = items.get_items(page, page_size)
     return render_template("index.html", items=all_items, page=page, page_count=page_count)
 
@@ -49,9 +47,73 @@ def show_lines(content):
     return markupsafe.Markup(content)
 
 #==========
-#KIRJAT
+#USER
 #==========
-#Kirjat: lisää
+#USER: register
+@app.route("/register")
+def register():
+    ensure_csrf_token()
+    return render_template("register.html")
+
+@app.route("/create", methods=["POST"])
+def create():
+    check_csrf()
+    username = request.form["username"]
+    password1 = request.form["password1"]
+    password2 = request.form["password2"]
+    if not username or not password1 or not password2:
+        flash("VIRHE: Kaikki kentät täytettävä")
+        return redirect("/register")
+    if password1 != password2:
+        flash("VIRHE: Salasanat eivät ole samat")
+        return redirect("/register")
+    if not users.create_user(username, password1):
+        flash("VIRHE: Tunnus on jo luotu")
+        return redirect("/register")
+    flash("Tunnus luotu onnistuneesti")
+    return redirect("/login")
+
+#USER: login
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "GET":
+        ensure_csrf_token()
+        return render_template("login.html")
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        user_id = users.check_login(username, password)
+        if user_id:
+            session["user_id"] = user_id
+            session["username"] = username
+            session["csrf_token"] = secrets.token_hex(16)
+            return redirect("/")
+        flash("VIRHE: Väärä tunnus tai salasana")
+        return redirect("/login")
+    return redirect("/login")
+
+#USER: logout
+@app.route("/logout")
+def logout():
+    if "user_id" in session:
+        del session["user_id"]
+        del session["username"]
+    return redirect("/")
+
+#USER: show
+@app.route("/user/<int:user_id>")
+def show_user(user_id):
+    user = users.get_user(user_id)
+    if not user:
+        abort(404)
+    user_items = users.get_items(user_id)
+    return render_template("show_user.html", user=user, items=user_items)
+
+
+#==========
+#BOOK
+#==========
+#BOOK: Add
 @app.route("/new_item")
 def new_item():
     require_login()
@@ -90,7 +152,7 @@ def create_items():
     item_id = items.add_item(title, author, description, rate, user_id, classes)
     return redirect(f"/item/{item_id}")
 
-#Kirjat: muokkaa
+#BOOK: Edit
 @app.route("/edit_item/<int:item_id>")
 def edit_item(item_id):
     require_login()
@@ -107,7 +169,7 @@ def edit_item(item_id):
         classes[entry["title"]] = entry["value"]
     return render_template("edit_item.html", item=item, classes=classes, all_classes=all_classes)
 
-#Kirjat: päivitä
+#BOOK: update
 @app.route("/update_item/<int:item_id>", methods=["POST"])
 def update_item(item_id):
     require_login()
@@ -142,7 +204,7 @@ def update_item(item_id):
     items.update_item(item_id, title, author, description, rate, classes)
     return redirect(f"/item/{item_id}")
 
-#Kirjat: poista
+#BOOK: remove
 @app.route("/remove_item/<int:item_id>", methods=["GET", "POST"])
 def remove_item(item_id):
     require_login()
@@ -162,7 +224,7 @@ def remove_item(item_id):
         return redirect("/item/" + str(item_id))
     return redirect("/item/" + str(item_id))
 
-#Kirjat: näytä
+#BOOK: show
 @app.route("/item/<int:item_id>")
 def show_item(item_id):
     item = items.get_item(item_id)
@@ -181,7 +243,7 @@ def show_item(item_id):
         images=images
     )
 
-##KUVAT##
+#BOOK: picture
 @app.route("/images/<int:item_id>")
 def edit_images(item_id):
     require_login()
@@ -233,18 +295,19 @@ def remove_images():
         items.remove_image(item_id, image_id)
     return redirect("/images/" +str(item_id))
 
-#Kirjat: etsi
+#BOOK: find
 @app.route("/find_item")
 def find_item():
+    searched = "query" in request.args
     query = request.args.get("query", "")
     if query:
         results = items.find_items(query)
     else:
         query = ""
         results = []
-    return render_template("find_item.html", query=query, results=results)
+    return render_template("find_item.html", query=query, results=results, searched=searched)
 
-#Kirjat: kommentoi
+#BOOK: comment
 @app.route("/create_comment", methods=["POST"])
 def create_comment():
     require_login()
@@ -316,68 +379,3 @@ def update_comment(comment_id):
         abort(403)
     items.update_comment(comment_id, rate, new_comment)
     return redirect("/item/" + str(comment["item_id"]))
-
-#==========
-#KÄYTTÄJÄ
-#==========
-#Käyttäjä: rekisteröityminen
-@app.route("/register")
-def register():
-    ensure_csrf_token()
-    return render_template("register.html")
-
-@app.route("/create", methods=["POST"])
-def create():
-    check_csrf()
-    username = request.form["username"]
-    password1 = request.form["password1"]
-    password2 = request.form["password2"]
-    if not username or not password1 or not password2:
-        flash("VIRHE: Kaikki kentät täytettävä")
-        return redirect("/register")
-    if password1 != password2:
-        flash("VIRHE: Salasanat eivät ole samat")
-        return redirect("/register")
-    if not users.create_user(username, password1):
-        flash("VIRHE: Tunnus on jo luotu")
-        return redirect("/register")
-    flash("Tunnus luotu onnistuneesti")
-    return redirect("/login")
-
-#Käyttäjä: kirjautuminen
-@app.route("/login", methods=["GET", "POST"])
-def login():
-
-    if request.method == "GET":
-        ensure_csrf_token()
-        return render_template("login.html")
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-
-        user_id = users.check_login(username, password)
-        if user_id:
-            session["user_id"] = user_id
-            session["username"] = username
-            session["csrf_token"] = secrets.token_hex(16)
-            return redirect("/")
-        flash("VIRHE: Väärä tunnus tai salasana")
-        return redirect("/login")
-    return redirect("/login")
-
-#Käyttäjä: uloskirjautuminen
-@app.route("/logout")
-def logout():
-    if "user_id" in session:
-        del session["user_id"]
-        del session["username"]
-    return redirect("/")
-
-#Käyttäjä: näytä
-@app.route("/user/<int:user_id>")
-def show_user(user_id):
-    user = users.get_user(user_id)
-    if not user:
-        abort(404)
-    user_items = users.get_items(user_id)
-    return render_template("show_user.html", user=user, items=user_items)

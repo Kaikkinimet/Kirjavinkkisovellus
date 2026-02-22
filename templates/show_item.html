@@ -79,7 +79,8 @@
                 <a href="/user/{{ co.user_id }}">{{ co.username }}</a>
                 - ⭐️ {{ co.rate}} /5
                 <small>({{ co.created_at.split(" ")[0] }})</small>
-                <div class="comment"> {{ co.comment }}</div>
+                <div class="comment"> {{ co.comment | show_lines }}</div>
+                <br/>
                 {% if session.get("user_id") == co.user_id or session.get("user_id") == item.user_id %}
                 <div class="comment-actions">
                         {% if session.get("user_id") == co.user_id %}
